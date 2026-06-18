@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Otto — User Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --surface: #141416;
+    --surface-2: #1c1c20;
+    --surface-3: #222228;
+    --border: #27272b;
+    --border-light: #333338;
+    --text: #ececee;
+    --text-dim: #8b8b96;
+    --text-muted: #56565e;
+    --accent: #6366f1;
+    --accent-light: #818cf8;
+    --accent-glow: rgba(99,102,241,0.15);
+    --green: #22c55e;
+    --green-glow: rgba(34,197,94,0.12);
+    --red: #ef4444;
+    --orange: #f59e0b;
+    --orange-glow: rgba(245,158,11,0.12);
+    --cyan: #06b6d4;
+    --cyan-glow: rgba(6,182,212,0.12);
+    --yellow: #eab308;
+    --yellow-glow: rgba(234,179,8,0.12);
+    --radius: 12px;
+    --radius-lg: 16px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 32px;
+    background: rgba(10,10,11,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .nav-left { display: flex; align-items: center; gap: 24px; }
+  .nav-logo { font-size: 20px; font-weight: 700; text-decoration: none; color: var(--text); }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 8px; }
+  .nav-links a {
+    font-size: 13px; color: var(--text-dim); text-decoration: none;
+    padding: 6px 12px; border-radius: 8px; transition: all 0.15s;
+  }
+  .nav-links a:hover { color: var(--text); background: var(--surface-2); }
+  .nav-links a.active { color: var(--accent); background: var(--accent-glow); }
+  .nav-cta {
+    font-size: 13px; font-weight: 600; color: #fff;
+    background: var(--accent); text-decoration: none;
+    padding: 8px 20px; border-radius: 8px;
+    transition: opacity 0.15s;
+  }
+  .nav-cta:hover { opacity: 0.9; }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 120px 32px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, rgba(99,102,241,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: 38px; font-weight: 700; margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--text), var(--accent-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p { font-size: 16px; color: var(--text-dim); max-width: 600px; margin: 0 auto; }
+
+  /* ── TOC ── */
+  .toc {
+    max-width: 800px; margin: 0 auto 48px;
+    padding: 0 32px;
+  }
+  .toc-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+  }
+  .toc-title {
+    font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px;
+  }
+  .toc-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .toc-list a {
+    font-size: 14px; color: var(--accent-light); text-decoration: none;
+    padding: 6px 12px; border-radius: 8px;
+    display: flex; align-items: center; gap: 10px;
+    transition: all 0.15s;
+  }
+  .toc-list a:hover { background: var(--accent-glow); }
+  .toc-num {
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    background: var(--accent-glow); width: 24px; height: 24px;
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── Content ── */
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 32px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  /* Section */
+  .section { scroll-margin-top: 80px; }
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 20px;
+  }
+  .section-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .section-icon.purple { background: var(--accent-glow); }
+  .section-icon.orange { background: var(--orange-glow); }
+  .section-icon.green { background: var(--green-glow); }
+  .section-icon.cyan { background: var(--cyan-glow); }
+  .section-icon.yellow { background: var(--yellow-glow); }
+  .section h2 {
+    font-size: 24px; font-weight: 700;
+  }
+  .section-sub {
+    font-size: 14px; color: var(--text-dim); margin-top: 2px;
+  }
+
+  /* Text blocks */
+  .section p {
+    font-size: 15px; color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .section p strong { color: var(--text); }
+
+  /* Callout / tip box */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .callout.warning {
+    border-left-color: var(--orange);
+    background: rgba(245,158,11,0.04);
+  }
+  .callout.success {
+    border-left-color: var(--green);
+    background: rgba(34,197,94,0.04);
+  }
+  .callout-title {
+    font-size: 13px; font-weight: 700; color: var(--text);
+    margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+  }
+
+  /* File cards */
+  .file-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .file-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    transition: border-color 0.15s;
+  }
+  .file-card:hover { border-color: var(--border-light); }
+  .file-name {
+    font-size: 13px; font-weight: 600; color: var(--accent-light);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .file-desc {
+    font-size: 12px; color: var(--text-dim); line-height: 1.5;
+  }
+
+  /* Steps */
+  .steps {
+    display: flex; flex-direction: column; gap: 12px;
+    margin: 16px 0;
+  }
+  .step {
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .step-num {
+    width: 28px; height: 28px; flex-shrink: 0;
+    border-radius: 8px; background: var(--accent-glow);
+    color: var(--accent); font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .step-desc { font-size: 13px; color: var(--text-dim); }
+
+  /* Model comparison table */
+  .model-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .model-table th {
+    text-align: left; padding: 10px 14px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .model-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .model-table tr:hover td { background: var(--surface); }
+  .model-table .model-name {
+    font-weight: 600; color: var(--text);
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  }
+  .badge {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 10px;
+  }
+  .badge.cheap { background: var(--green-glow); color: var(--green); }
+  .badge.mid { background: var(--cyan-glow); color: var(--cyan); }
+  .badge.premium { background: var(--accent-glow); color: var(--accent); }
+  .badge.free { background: var(--green-glow); color: var(--green); }
+
+  /* Code block */
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-dim);
+    overflow-x: auto;
+  }
+  .code-block .comment { color: var(--text-muted); }
+  .code-block .key { color: var(--accent-light); }
+  .code-block .value { color: var(--green); }
+
+  /* ── Footer ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 32px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .footer a { color: var(--accent-light); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 28px; }
+    .file-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .content { padding: 0 20px 60px; }
+    .toc { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav class="nav">
+  <div class="nav-left">
+    <a href="/" class="nav-logo">🤖 <span>Otto</span></a>
+    <div class="nav-links">
+      <a href="/dashboard">Dashboard</a>
+      <a href="/guide" class="active">Guide</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+    </div>
+  </div>
+  <a href="/dashboard" class="nav-cta">Open Dashboard</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <h1>Getting Started with Otto</h1>
+  <p>Everything you need to set up your AI agents, manage tokens, and get the most out of your subscription.</p>
+</section>
+
+<!-- ── Table of Contents ── -->
+<div class="toc">
+  <div class="toc-box">
+    <div class="toc-title">In this guide</div>
+    <ul class="toc-list">
+      <li><a href="#mindset"><span class="toc-num">1</span> The right mindset: treat your agent like a new hire</a></li>
+      <li><a href="#setup"><span class="toc-num">2</span> Setting up your agent's personality</a></li>
+      <li><a href="#context"><span class="toc-num">3</span> Giving your agent the right context</a></li>
+      <li><a href="#security"><span class="toc-num">4</span> Information security: what to share and when</a></li>
+      <li><a href="#tokens"><span class="toc-num">5</span> Understanding AI tokens</a></li>
+      <li><a href="#models"><span class="toc-num">6</span> Choosing the right model</a></li>
+      <li><a href="#topup"><span class="toc-num">7</span> Managing your credits</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ── Content ── -->
+<div class="content">
+
+  <!-- §1 Mindset -->
+  <section class="section" id="mindset">
+    <div class="section-header">
+      <div class="section-icon purple">🧠</div>
+      <div>
+        <h2>Treat your agent like a new employee</h2>
+        <div class="section-sub">The single most important thing to understand</div>
+      </div>
+    </div>
+    <p>
+      The best way to think about your Otto agent is as a <strong>new hire on their first day</strong>. They're smart, capable, and ready to work — but they know nothing about your business yet. The quality of their work depends entirely on how well you onboard them.
+    </p>
+    <p>
+      Just like a real employee, your agent needs to understand:
+    </p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Who they are</div>
+          <div class="step-desc">Their name, role, tone of voice, and personality.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">What they do</div>
+          <div class="step-desc">Their responsibilities, tasks, and what success looks like.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Who they work for</div>
+          <div class="step-desc">Your company, your values, your customers, and how you operate.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Who they report to</div>
+          <div class="step-desc">You! And potentially other agents in the team.</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout success">
+      <div class="callout-title">💡 Pro tip</div>
+      The more specific and detailed your setup, the better your agent performs. An agent with a vague description will give vague answers. An agent with a rich backstory, clear rules, and detailed knowledge will feel like magic.
+    </div>
+  </section>
+
+  <!-- §2 Setup -->
+  <section class="section" id="setup">
+    <div class="section-header">
+      <div class="section-icon green">⚙️</div>
+      <div>
+        <h2>Setting up your agent's personality</h2>
+        <div class="section-sub">The files that define who your agent is</div>
+      </div>
+    </div>
+    <p>
+      Your agent has two layers of knowledge: <strong>permanent configuration files</strong> that define its core behavior, and <strong>conversation memory</strong> that it builds up as you chat.
+    </p>
+
+    <p style="margin-top:20px"><strong>Layer 1: Configuration files</strong> (permanent — set during setup)</p>
+    <p>These files live on your agent's dedicated server and are loaded every time it starts. They define the agent's baseline personality and knowledge before any conversation happens.</p>
+    <div class="file-grid">
+      <div class="file-card">
+        <div class="file-name">✨ Personality</div>
+        <div class="file-desc">The core personality definition. Defines the agent's name, tone, communication style, values, and behavioral guidelines. This is who they <em>are</em>.</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name">🪪 Profile</div>
+        <div class="file-desc">Detailed identity information: their role title, area of expertise, how they introduce themselves, and what they're specifically good at.</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name">📋 Workspace Rules</div>
+        <div class="file-desc">Defines the team structure when multiple agents are involved. Who reports to whom, how they collaborate, and escalation paths.</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name">🧠 Knowledge Base</div>
+        <div class="file-desc">Long-term memory and reference knowledge: your company details, products, services, processes, and anything the agent should always know.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">📝 How to edit these</div>
+      Go to <strong>Settings</strong> in your dashboard — click the ⚙️ icon on any agent card. You can edit all configuration directly from there.
+    </div>
+
+    <p style="margin-top:20px"><strong>Layer 2: Conversation memory</strong> (builds up as you chat)</p>
+    <p>
+      As you talk to your agent, it <strong>remembers the conversation</strong> and builds context over time. You can tell it things like <em>"My company sells organic coffee to restaurants in Lyon"</em> and it will remember this for the rest of the session.
+    </p>
+    <div class="callout success">
+      <div class="callout-title">💡 What's the difference?</div>
+      Think of <strong>configuration</strong> as the employee handbook your agent reads on day one — always there, always loaded. <strong>Conversation memory</strong> is like the notes they take during meetings — it persists across messages but may not survive a server restart. For critical information that must always be available, put it in the configuration.
+    </div>
+
+    <p>Here's an example of what a good <strong>Personality</strong> setup looks like:</p>
+    <div class="code-block">
+<span class="comment"># Agent Personality</span>
+
+<span class="key">Name:</span> <span class="value">Eric</span>
+<span class="key">Role:</span> <span class="value">CFO & Financial Advisor</span>
+<span class="key">Company:</span> <span class="value">Bright Studios (creative agency)</span>
+
+<span class="comment">## Personality</span>
+<span class="value">You are precise, analytical, and calm. You communicate financial
+information clearly without unnecessary jargon. You're direct
+but never condescending. When you don't know something, you say so.</span>
+
+<span class="comment">## Rules</span>
+<span class="value">- Always present numbers with context (% change, comparison)
+- Flag expenses over €5,000 for human review
+- Never authorize payments — only recommend
+- When asked about legal matters, defer to the legal team
+- Keep a professional, warm tone in all communications</span>
+
+<span class="comment">## Tasks</span>
+<span class="value">- Monthly expense tracking and reporting
+- Budget forecasting and analysis
+- Invoice review and categorization
+- Financial Q&A for the team</span>
+    </div>
+  </section>
+
+  <!-- §3 Context -->
+  <section class="section" id="context">
+    <div class="section-header">
+      <div class="section-icon cyan">💬</div>
+      <div>
+        <h2>Giving your agent the right context</h2>
+        <div class="section-sub">What your agent needs to know about you</div>
+      </div>
+    </div>
+    <p>
+      For your agent to serve you well, it needs to understand <strong>your world</strong>. The more relevant context you provide, the more useful and accurate the agent's responses will be.
+    </p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">🏢</div>
+        <div class="step-content">
+          <div class="step-title">Your company</div>
+          <div class="step-desc">What does your business do? Who are your customers? What's your industry? What makes you different?</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">👤</div>
+        <div class="step-content">
+          <div class="step-title">Your role</div>
+          <div class="step-desc">What's your position? What decisions do you make? What do you need help with?</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">📋</div>
+        <div class="step-content">
+          <div class="step-title">Your processes</div>
+          <div class="step-desc">How do you handle invoices? What's your approval workflow? What tools do you use?</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🎯</div>
+        <div class="step-content">
+          <div class="step-title">Your preferences</div>
+          <div class="step-desc">How formal or casual should the agent be? What language? Should it ask for confirmation before acting?</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout success">
+      <div class="callout-title">💡 Example prompt to give your agent context</div>
+      <em>"I run a 15-person marketing agency in Paris. Our main clients are B2B SaaS companies. We use Notion for project management and Pennylane for accounting. I'm the CEO and I want you to help me track monthly expenses and flag anything unusual."</em>
+    </div>
+  </section>
+
+  <!-- §4 Security -->
+  <section class="section" id="security">
+    <div class="section-header">
+      <div class="section-icon orange">🔒</div>
+      <div>
+        <h2>Information security</h2>
+        <div class="section-sub">What to share with your agent — and what to hold back</div>
+      </div>
+    </div>
+    <p>
+      Just like with a new employee, <strong>you wouldn't hand over the keys to everything on day one</strong>. Start with the information your agent needs for their immediate tasks, and expand access as you build trust and confidence.
+    </p>
+    <div class="callout warning">
+      <div class="callout-title">⚠️ Important</div>
+      Your agent runs on a <strong>dedicated, isolated server</strong> that only you can access. Your data is not shared with other customers. However, conversations are processed by AI models (like Claude or GPT) to generate responses. Never share passwords, API keys, credit card numbers, or highly sensitive credentials directly in chat.
+    </div>
+    <p><strong>Safe to share:</strong></p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">✅</div>
+        <div class="step-content">
+          <div class="step-desc">Company information, processes, org structure, product details</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">✅</div>
+        <div class="step-content">
+          <div class="step-desc">General financial figures, budgets, forecasts</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">✅</div>
+        <div class="step-content">
+          <div class="step-desc">Customer names and general project context</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">✅</div>
+        <div class="step-content">
+          <div class="step-desc">Documents, reports, and presentations</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:16px"><strong>Be cautious with:</strong></p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">⚠️</div>
+        <div class="step-content">
+          <div class="step-desc">Bank account details, tax IDs, social security numbers</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">⚠️</div>
+        <div class="step-content">
+          <div class="step-desc">Passwords, API keys, private encryption keys</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">⚠️</div>
+        <div class="step-content">
+          <div class="step-desc">Confidential legal documents before review</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">⚠️</div>
+        <div class="step-content">
+          <div class="step-desc">Personal health or sensitive employee data</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- §5 Tokens -->
+  <section class="section" id="tokens">
+    <div class="section-header">
+      <div class="section-icon yellow">⚡</div>
+      <div>
+        <h2>Understanding AI tokens</h2>
+        <div class="section-sub">Why some tasks cost more than others</div>
+      </div>
+    </div>
+    <p>
+      Every time your agent reads your message and generates a response, it uses <strong>AI tokens</strong>. Tokens are the currency of AI models — roughly, 1 token ≈ ¾ of a word. Both your input and the agent's output consume tokens.
+    </p>
+    <p>
+      <strong>Not all tasks are equal.</strong> A simple "What time is our meeting?" uses a handful of tokens. But asking your agent to analyze a 50-page financial report and write a summary could use 100× more.
+    </p>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ Token usage can add up quickly</div>
+      Complex tasks — long documents, detailed analysis, code generation, multi-step reasoning — burn through tokens fast. If you're cost-sensitive, be mindful of how many complex requests you make, especially with premium models.
+    </div>
+
+    <p><strong>What affects token usage:</strong></p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">📏</div>
+        <div class="step-content">
+          <div class="step-title">Message length</div>
+          <div class="step-desc">Longer messages = more tokens in. Longer responses = more tokens out.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🧠</div>
+        <div class="step-content">
+          <div class="step-title">Task complexity</div>
+          <div class="step-desc">Analysis, reasoning, and creative tasks require the model to "think" more, which uses more tokens.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">📎</div>
+        <div class="step-content">
+          <div class="step-title">Attachments & context</div>
+          <div class="step-desc">Sending documents, images, or referencing long conversation history adds tokens.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🤖</div>
+        <div class="step-content">
+          <div class="step-title">Model choice</div>
+          <div class="step-desc">Smarter models (like Claude Opus) cost more per token than lighter models (like Haiku).</div>
+        </div>
+      </div>
+    </div>
+
+    <p>Here's a rough guide to token costs for common tasks:</p>
+    <table class="model-table">
+      <thead>
+        <tr><th>Task</th><th>Tokens (approx.)</th><th>Cost*</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Quick Q&A</td><td>~200–500</td><td>< $0.01</td></tr>
+        <tr><td>Email draft</td><td>~500–1,500</td><td>~$0.01</td></tr>
+        <tr><td>Document summary (5 pages)</td><td>~3,000–8,000</td><td>~$0.03–0.08</td></tr>
+        <tr><td>Detailed analysis + report</td><td>~10,000–30,000</td><td>~$0.10–0.30</td></tr>
+        <tr><td>Large document review (50+ pages)</td><td>~50,000+</td><td>~$0.50+</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text-muted)">* Estimated costs using Claude Sonnet 4.5 ($3/M input, $15/M output tokens)</p>
+  </section>
+
+  <!-- §6 Models -->
+  <section class="section" id="models">
+    <div class="section-header">
+      <div class="section-icon purple">🧪</div>
+      <div>
+        <h2>Choosing the right AI model</h2>
+        <div class="section-sub">Match the model to the task to save money</div>
+      </div>
+    </div>
+    <p>
+      Otto gives each agent access to <strong>300+ AI models</strong> through OpenRouter. The default is Claude Sonnet 4.5, which offers an excellent balance of intelligence and cost. But you can switch models to optimize for either <strong>cost</strong> or <strong>performance</strong>.
+    </p>
+
+    <div class="callout success">
+      <div class="callout-title">💡 The golden rule</div>
+      <strong>Use cheap models for simple tasks, expensive models for complex ones.</strong> There's no reason to use a $75/M-token model to answer "What's the weather today?"
+    </div>
+
+    <table class="model-table">
+      <thead>
+        <tr><th>Model</th><th>Best for</th><th>Cost</th><th>Tier</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="model-name">Claude Haiku 4.5</span></td>
+          <td>Quick answers, classification, simple tasks</td>
+          <td>$0.80 / $4 per 1M</td>
+          <td><span class="badge cheap">Budget</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">Gemini 3 Flash</span></td>
+          <td>Fast responses, basic analysis, high volume</td>
+          <td>Free – $0.30 / $1.25</td>
+          <td><span class="badge free">Free/Cheap</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">Claude Sonnet 4.5</span></td>
+          <td>General purpose, writing, analysis, coding</td>
+          <td>$3 / $15 per 1M</td>
+          <td><span class="badge mid">Standard ★</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">GPT-4o</span></td>
+          <td>Creative writing, nuanced reasoning</td>
+          <td>$2.50 / $10 per 1M</td>
+          <td><span class="badge mid">Standard</span></td>
+        </tr>
+        <tr>
+          <td><span class="model-name">Claude Opus 4.6</span></td>
+          <td>Complex reasoning, research, expert-level tasks</td>
+          <td>$15 / $75 per 1M</td>
+          <td><span class="badge premium">Premium</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Example setups:</strong></p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">💰</div>
+        <div class="step-content">
+          <div class="step-title">Customer support agent (budget-focused)</div>
+          <div class="step-desc">Use <strong>Claude Haiku 4.5</strong> or <strong>Gemini Flash</strong> — fast, cheap, handles FAQs and routing well.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">⚖️</div>
+        <div class="step-content">
+          <div class="step-title">General business assistant (balanced)</div>
+          <div class="step-desc">Use <strong>Claude Sonnet 4.5</strong> (default) — great all-rounder for email drafts, analysis, and planning.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🔬</div>
+        <div class="step-content">
+          <div class="step-title">CFO / Strategic analyst (accuracy-focused)</div>
+          <div class="step-desc">Use <strong>Claude Opus 4.6</strong> — when you need deep reasoning, complex financial analysis, or expert-level output.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">📝 How to change your agent's model</div>
+      Model selection will be available directly from the dashboard in a future update. For now, contact us at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1d75787171725d72696972307c74337e72">[email&#160;protected]</a></strong> and we'll update it for you within minutes.
+    </div>
+  </section>
+
+  <!-- §7 Credits -->
+  <section class="section" id="topup">
+    <div class="section-header">
+      <div class="section-icon green">💳</div>
+      <div>
+        <h2>Managing your credits</h2>
+        <div class="section-sub">What happens when you run low — and how to top up</div>
+      </div>
+    </div>
+    <p>
+      Every Otto plan includes a monthly AI credit allowance. Credits reset at the start of each billing cycle. You can track your usage in real-time from the dashboard.
+    </p>
+
+    <table class="model-table">
+      <thead>
+        <tr><th>Plan</th><th>Agents</th><th>Included messages*</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Solo</strong></td><td>1</td><td>~2,000</td></tr>
+        <tr><td><strong>Team</strong></td><td>Up to 5</td><td>~6,000</td></tr>
+        <tr><td><strong>Enterprise</strong></td><td>Up to 12</td><td>~20,000</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text-muted)">* Approximate message count based on Claude Sonnet 4.5 with average-length conversations. Actual usage varies based on model and complexity. Contact us for pricing details.</p>
+
+    <p><strong>When your credits run low:</strong></p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">You'll see a warning in the dashboard</div>
+          <div class="step-desc">The credits bar turns orange at 80% usage and red at 95%.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Your agent keeps working</div>
+          <div class="step-desc">We won't cut off your agent mid-conversation. If you exceed your allowance, you can top up credits or upgrade your plan.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Top up or upgrade</div>
+          <div class="step-desc">Purchase additional credits or upgrade your plan for a higher monthly allowance.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-title">💡 Save credits with smart model selection</div>
+      Switch your routine-task agents to a cheaper model (Haiku or Gemini Flash) and reserve premium models for agents that need deep analysis. This alone can cut your token costs by 60–80%.
+    </div>
+
+    <p>
+      To purchase additional credits or upgrade your plan, visit the <a href="/dashboard" style="color:var(--accent-light)">dashboard</a> or contact us at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="abc3cec7c7c

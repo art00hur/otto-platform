@@ -1,0 +1,10 @@
+# Gitleaks configuration for Otto AI
+# https://github.com/gitleaks/gitleaks
+
+title = "Otto AI Gitleaks Config"
+
+[allowlist]
+  paths = [
+    '''\.env\.example$''',
+    '''node_modules/''',
+  ]

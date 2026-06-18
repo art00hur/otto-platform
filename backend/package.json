@@ -1,0 +1,38 @@
+{
+  "name": "@claw/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.0.0",
+    "@fastify/rate-limit": "^10.2.0",
+    "@fastify/websocket": "^11.0.0",
+    "@neondatabase/serverless": "^0.10.0",
+    "canvas": "^3.2.1",
+    "dotenv": "^16.4.0",
+    "drizzle-orm": "^0.38.0",
+    "fastify": "^5.2.0",
+    "nanoid": "^5.0.0",
+    "node-ssh": "^13.2.0",
+    "pino": "^9.6.0",
+    "qrcode": "^1.5.4",
+    "pino-pretty": "^13.0.0",
+    "postgres": "^3.4.0",
+    "stripe": "^17.5.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/qrcode": "^1.5.5",
+    "drizzle-kit": "^0.30.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
