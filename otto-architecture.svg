@@ -1,0 +1,222 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8888a8"/>
+    </marker>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#06b6d4"/>
+    </marker>
+    <marker id="arrow-pink" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ec4899"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="680" rx="12" fill="#0a0a0f"/>
+
+  <!-- Title -->
+  <text x="450" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#6366f1">🤖 Otto Platform Architecture</text>
+
+  <!-- ═══ USERS SECTION ═══ -->
+  <text x="30" y="62" font-size="10" font-weight="600" fill="#ec4899" letter-spacing="2">USERS</text>
+
+  <!-- Browser -->
+  <rect x="20" y="70" width="140" height="50" rx="8" fill="#1a1a28" stroke="#ec4899" stroke-width="1"/>
+  <text x="40" y="92" font-size="12" font-weight="700" fill="#ec4899">🌐 Browser</text>
+  <text x="40" y="108" font-size="9" fill="#8888a8">otto-ai.co</text>
+
+  <!-- Channels -->
+  <rect x="20" y="130" width="140" height="65" rx="8" fill="#1a1a28" stroke="#ec4899" stroke-width="1"/>
+  <text x="40" y="152" font-size="12" font-weight="700" fill="#ec4899">📱 Channels</text>
+  <text x="40" y="168" font-size="9" fill="#8888a8">Slack · WhatsApp</text>
+  <text x="40" y="182" font-size="9" fill="#8888a8">Telegram · Email</text>
+
+  <!-- ═══ CONTROL PLANE ═══ -->
+  <text x="200" y="62" font-size="10" font-weight="600" fill="#6366f1" letter-spacing="2">CONTROL PLANE — 203.0.113.10</text>
+  <rect x="190" y="68" width="520" height="230" rx="10" fill="none" stroke="#6366f1" stroke-width="1" stroke-dasharray="4 3" opacity="0.5"/>
+
+  <!-- Auth -->
+  <rect x="205" y="80" width="155" height="55" rx="8" fill="#12121a" stroke="#252540" stroke-width="1"/>
+  <text x="220" y="102" font-size="12" font-weight="700" fill="#6366f1">🔐 Auth</text>
+  <text x="220" y="118" font-size="9" fill="#8888a8">Google OAuth → JWT</text>
+  <rect x="330" y="78" width="24" height="16" rx="8" fill="#22c55e"/>
+  <text x="342" y="90" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">✓</text>
+
+  <!-- Billing -->
+  <rect x="370" y="80" width="155" height="55" rx="8" fill="#12121a" stroke="#252540" stroke-width="1"/>
+  <text x="385" y="102" font-size="12" font-weight="700" fill="#6366f1">💳 Stripe</text>
+  <text x="385" y="118" font-size="9" fill="#8888a8">€49 / €149 / €349+</text>
+  <rect x="495" y="78" width="24" height="16" rx="8" fill="#22c55e"/>
+  <text x="507" y="90" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">✓</text>
+
+  <!-- Provisioning -->
+  <rect x="535" y="80" width="165" height="55" rx="8" fill="#12121a" stroke="#252540" stroke-width="1"/>
+  <text x="550" y="102" font-size="12" font-weight="700" fill="#6366f1">⚙️ Provisioning</text>
+  <text x="550" y="118" font-size="9" fill="#8888a8">Hetzner API + Pool Worker</text>
+  <rect x="670" y="78" width="24" height="16" rx="8" fill="#22c55e"/>
+  <text x="682" y="90" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">✓</text>
+
+  <!-- API Server -->
+  <rect x="205" y="148" width="210" height="55" rx="8" fill="#12121a" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="220" y="170" font-size="12" font-weight="700" fill="#6366f1">🖥 API Server</text>
+  <text x="220" y="186" font-size="9" fill="#8888a8">Fastify + WebSocket proxy</text>
+
+  <!-- Dashboard SPA -->
+  <rect x="425" y="148" width="165" height="55" rx="8" fill="#12121a" stroke="#252540" stroke-width="1"/>
+  <text x="440" y="170" font-size="12" font-weight="700" fill="#6366f1">📊 Dashboard</text>
+  <text x="440" y="186" font-size="9" fill="#8888a8">Chat, config, billing</text>
+
+  <!-- PostgreSQL -->
+  <rect x="205" y="216" width="120" height="50" rx="8" fill="#12121a" stroke="#f59e0b" stroke-width="1"/>
+  <text x="220" y="238" font-size="11" font-weight="700" fill="#f59e0b">🗄 PostgreSQL</text>
+  <text x="220" y="253" font-size="9" fill="#8888a8">Users, subs, VPS</text>
+
+  <!-- Redis -->
+  <rect x="335" y="216" width="100" height="50" rx="8" fill="#12121a" stroke="#f59e0b" stroke-width="1"/>
+  <text x="348" y="238" font-size="11" font-weight="700" fill="#f59e0b">⚡ Redis</text>
+  <text x="348" y="253" font-size="9" fill="#8888a8">WS, tunnels</text>
+
+  <!-- SSH Tunnel Pool -->
+  <rect x="445" y="216" width="155" height="50" rx="8" fill="#12121a" stroke="#06b6d4" stroke-width="1.5"/>
+  <text x="460" y="238" font-size="11" font-weight="700" fill="#06b6d4">🔒 SSH Tunnel Pool</text>
+  <text x="460" y="253" font-size="9" fill="#8888a8">Lazy, ~50-100 conc.</text>
+
+  <!-- ═══ CUSTOMER VPS ═══ -->
+  <text x="200" y="318" font-size="10" font-weight="600" fill="#22c55e" letter-spacing="2">CUSTOMER VPS — 1 PER CUSTOMER</text>
+  <rect x="190" y="324" width="520" height="195" rx="10" fill="none" stroke="#22c55e" stroke-width="1" stroke-dasharray="4 3" opacity="0.5"/>
+
+  <!-- Gateway -->
+  <rect x="205" y="336" width="235" height="80" rx="8" fill="#12121a" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="220" y="358" font-size="12" font-weight="700" fill="#22c55e">🧠 OpenClaw Gateway</text>
+  <text x="220" y="374" font-size="9" fill="#8888a8">127.0.0.1:{random port}</text>
+  <text x="220" y="390" font-size="9" fill="#8888a8">Auth token required</text>
+  <text x="220" y="404" font-size="9" fill="#8888a8">systemd auto-start</text>
+
+  <!-- Agents -->
+  <rect x="450" y="336" width="130" height="80" rx="8" fill="#12121a" stroke="#22c55e" stroke-width="1"/>
+  <text x="465" y="358" font-size="12" font-weight="700" fill="#22c55e">🤖 Agents</text>
+  <text x="465" y="374" font-size="9" fill="#8888a8">CEO · CFO</text>
+  <text x="465" y="390" font-size="9" fill="#8888a8">Support · Marketing</text>
+  <text x="465" y="406" font-size="9" fill="#55556a">sessions_send/spawn</text>
+
+  <!-- Security -->
+  <rect x="205" y="426" width="235" height="55" rx="8" fill="#12121a" stroke="#ef4444" stroke-width="1"/>
+  <text x="220" y="448" font-size="11" font-weight="700" fill="#ef4444">🛡 Security</text>
+  <text x="220" y="464" font-size="9" fill="#8888a8">UFW: SSH from ctrl plane only</text>
+  <text x="220" y="478" font-size="9" fill="#8888a8">Loopback + random port + token</text>
+
+  <!-- Config -->
+  <rect x="590" y="336" width="110" height="145" rx="8" fill="#12121a" stroke="#22c55e" stroke-width="1"/>
+  <text x="603" y="358" font-size="11" font-weight="700" fill="#22c55e">📁 Config</text>
+  <text x="603" y="374" font-size="9" fill="#8888a8">openclaw.json</text>
+  <text x="603" y="390" font-size="9" fill="#8888a8">OpenRouter key</text>
+  <text x="603" y="406" font-size="9" fill="#8888a8">SOUL.md</text>
+  <text x="603" y="422" font-size="9" fill="#8888a8">Channel tokens</text>
+  <text x="603" y="438" font-size="9" fill="#8888a8">.env files</text>
+  <text x="603" y="454" font-size="9" fill="#8888a8">IMAP creds</text>
+  <text x="603" y="470" font-size="9" fill="#55556a">On VPS only</text>
+
+  <!-- Connectors -->
+  <rect x="450" y="426" width="130" height="55" rx="8" fill="#12121a" stroke="#22c55e" stroke-width="1"/>
+  <text x="465" y="448" font-size="11" font-weight="700" fill="#22c55e">🔌 Connectors</text>
+  <text x="465" y="464" font-size="9" fill="#8888a8">WA session files</text>
+  <text x="465" y="478" font-size="9" fill="#8888a8">Slack/TG tokens</text>
+
+  <!-- ═══ EXTERNAL SERVICES ═══ -->
+  <text x="200" y="540" font-size="10" font-weight="600" fill="#06b6d4" letter-spacing="2">EXTERNAL SERVICES</text>
+
+  <!-- OpenRouter -->
+  <rect x="200" y="550" width="200" height="60" rx="8" fill="#12121a" stroke="#06b6d4" stroke-width="1"/>
+  <text x="215" y="572" font-size="12" font-weight="700" fill="#06b6d4">🧪 OpenRouter</text>
+  <text x="215" y="588" font-size="9" fill="#8888a8">300+ models · Sonnet 4.5 default</text>
+  <text x="215" y="602" font-size="9" fill="#8888a8">5.5% fee · auto-fallback</text>
+
+  <!-- Hetzner -->
+  <rect x="410" y="550" width="140" height="60" rx="8" fill="#12121a" stroke="#06b6d4" stroke-width="1"/>
+  <text x="425" y="572" font-size="12" font-weight="700" fill="#06b6d4">☁️ Hetzner</text>
+  <text x="425" y="588" font-size="9" fill="#8888a8">CPX11 €4.85/mo</text>
+  <text x="425" y="602" font-size="9" fill="#8888a8">Snapshot-based</text>
+
+  <!-- Stripe -->
+  <rect x="560" y="550" width="110" height="60" rx="8" fill="#12121a" stroke="#06b6d4" stroke-width="1"/>
+  <text x="575" y="572" font-size="12" font-weight="700" fill="#06b6d4">💰 Stripe</text>
+  <text x="575" y="588" font-size="9" fill="#8888a8">3 plans</text>
+  <text x="575" y="602" font-size="9" fill="#8888a8">Webhooks</text>
+
+  <!-- Google -->
+  <rect x="680" y="550" width="110" height="60" rx="8" fill="#12121a" stroke="#06b6d4" stroke-width="1"/>
+  <text x="695" y="572" font-size="12" font-weight="700" fill="#06b6d4">🔑 Google</text>
+  <text x="695" y="588" font-size="9" fill="#8888a8">OAuth 2.0</text>
+  <text x="695" y="602" font-size="9" fill="#8888a8">ID tokens</text>
+
+  <!-- ═══ ARROWS ═══ -->
+
+  <!-- Browser → API Server -->
+  <line x1="160" y1="95" x2="205" y2="170" stroke="#ec4899" stroke-width="1.5" marker-end="url(#arrow-pink)"/>
+  <rect x="155" y="120" width="55" height="14" rx="3" fill="#0a0a0f" stroke="#252540" stroke-width="0.5"/>
+  <text x="182" y="130" text-anchor="middle" font-size="8" fill="#ec4899">HTTPS</text>
+
+  <!-- Channels → Customer VPS -->
+  <path d="M 140 195 Q 165 300 205 400" fill="none" stroke="#ec4899" stroke-width="1.5" marker-end="url(#arrow-pink)"/>
+  <rect x="138" y="270" width="42" height="14" rx="3" fill="#0a0a0f" stroke="#252540" stroke-width="0.5"/>
+  <text x="159" y="280" text-anchor="middle" font-size="8" fill="#ec4899">Direct</text>
+
+  <!-- API Server → SSH Pool -->
+  <line x1="415" y1="180" x2="445" y2="236" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="405" y="198" width="38" height="14" rx="3" fill="#0a0a0f" stroke="#252540" stroke-width="0.5"/>
+  <text x="424" y="208" text-anchor="middle" font-size="8" fill="#6366f1">proxy</text>
+
+  <!-- SSH Pool → Gateway -->
+  <line x1="520" y1="266" x2="380" y2="336" stroke="#06b6d4" stroke-width="2" marker-end="url(#arrow-cyan)"/>
+  <rect x="418" y="286" width="58" height="14" rx="3" fill="#0a0a0f" stroke="#252540" stroke-width="0.5"/>
+  <text x="447" y="296" text-anchor="middle" font-size="8" fill="#06b6d4">SSH tunnel</text>
+
+  <!-- Gateway → OpenRouter -->
+  <line x1="320" y1="416" x2="300" y2="550" stroke="#06b6d4" stroke-width="1.5" marker-end="url(#arrow-cyan)"/>
+  <rect x="280" y="472" width="60" height="14" rx="3" fill="#0a0a0f" stroke="#252540" stroke-width="0.5"/>
+  <text x="310" y="482" text-anchor="middle" font-size="8" fill="#06b6d4">AI inference</text>
+
+  <!-- Provisioning → Hetzner -->
+  <line x1="617" y1="135" x2="480" y2="550" stroke="#f59e0b" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#arrow-orange)"/>
+  <rect x="528" y="340" width="60" height="14" rx="3" fill="#0a0a0f" stroke="#252540" stroke-width="0.5"/>
+  <text x="558" y="350" text-anchor="middle" font-size="8" fill="#f59e0b">create VPS</text>
+
+  <!-- ═══ KEY NUMBERS ═══ -->
+  <rect x="730" y="70" width="155" height="225" rx="10" fill="#12121a" stroke="#252540" stroke-width="1"/>
+  <text x="745" y="90" font-size="9" font-weight="600" fill="#55556a" letter-spacing="2">KEY NUMBERS</text>
+
+  <text x="745" y="115" font-size="18" font-weight="700" fill="#6366f1">€4.85</text>
+  <text x="745" y="128" font-size="9" fill="#55556a">VPS cost/customer</text>
+
+  <text x="745" y="152" font-size="18" font-weight="700" fill="#6366f1">€49</text>
+  <text x="745" y="165" font-size="9" fill="#55556a">Min revenue/mo</text>
+
+  <text x="745" y="189" font-size="18" font-weight="700" fill="#22c55e">~62%</text>
+  <text x="745" y="202" font-size="9" fill="#55556a">Gross margin</text>
+
+  <text x="745" y="226" font-size="18" font-weight="700" fill="#6366f1">~2min</text>
+  <text x="745" y="239" font-size="9" fill="#55556a">Provision time</text>
+
+  <text x="745" y="263" font-size="18" font-weight="700" fill="#06b6d4">50-100</text>
+  <text x="745" y="276" font-size="9" fill="#55556a">SSH tunnels @1K users</text>
+
+  <!-- ═══ LEGEND ═══ -->
+  <rect x="20" y="630" width="860" height="40" rx="8" fill="#12121a" stroke="#252540" stroke-width="1"/>
+  <circle cx="45" cy="650" r="5" fill="#ec4899"/>
+  <text x="55" y="654" font-size="9" fill="#8888a8">User traffic</text>
+  <circle cx="145" cy="650" r="5" fill="#6366f1"/>
+  <text x="155" y="654" font-size="9" fill="#8888a8">Control plane</text>
+  <circle cx="260" cy="650" r="5" fill="#06b6d4"/>
+  <text x="270" y="654" font-size="9" fill="#8888a8">SSH / AI</text>
+  <circle cx="345" cy="650" r="5" fill="#22c55e"/>
+  <text x="355" y="654" font-size="9" fill="#8888a8">Customer VPS</text>
+  <circle cx="460" cy="650" r="5" fill="#f59e0b"/>
+  <text x="470" y="654" font-size="9" fill="#8888a8">Data stores</text>
+  <circle cx="560" cy="650" r="5" fill="#ef4444"/>
+  <text x="570" y="654" font-size="9" fill="#8888a8">Security layer</text>
+  <line x1="660" y1="650" x2="690" y2="650" stroke="#8888a8" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="695" y="654" font-size="9" fill="#8888a8">Provisioning flow</text>
+</svg>

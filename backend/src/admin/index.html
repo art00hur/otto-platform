@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Otto Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #08080d;
+  --surface: #0f0f18;
+  --surface2: #141422;
+  --surface3: #1a1a2e;
+  --border: #1e1e38;
+  --border-active: #6366f1;
+  --accent: #6366f1;
+  --accent-dim: #4f46e5;
+  --accent-glow: rgba(99, 102, 241, 0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34, 197, 94, 0.15);
+  --orange: #f59e0b;
+  --orange-dim: rgba(245, 158, 11, 0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239, 68, 68, 0.12);
+  --cyan: #06b6d4;
+  --cyan-dim: rgba(6, 182, 212, 0.1);
+  --text: #e2e2f0;
+  --text-dim: #8888a8;
+  --text-muted: #55556a;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── Layout ─────────────────────────────────────────── */
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.topbar-logo { font-size: 20px; font-weight: 800; color: var(--accent); }
+.topbar-logo span { color: var(--text-muted); font-weight: 400; font-size: 12px; margin-left: 8px; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-status {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text-dim);
+}
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+.nav {
+  display: flex; gap: 2px; padding: 8px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.nav-btn {
+  padding: 8px 16px; border: none; background: none;
+  color: var(--text-dim); font-family: inherit; font-size: 12px;
+  cursor: pointer; border-radius: 6px; transition: all 0.15s;
+  font-weight: 500;
+}
+.nav-btn:hover { background: var(--surface3); color: var(--text); }
+.nav-btn.active { background: var(--accent-glow); color: var(--accent); }
+
+.main { flex: 1; padding: 24px; max-width: 1400px; width: 100%; margin: 0 auto; }
+
+/* ── Cards & Grids ──────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px; margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--border-active); }
+.stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+.stat-value { font-size: 26px; font-weight: 700; color: var(--text); }
+.stat-value.accent { color: var(--accent); }
+.stat-value.green { color: var(--green); }
+.stat-value.orange { color: var(--orange); }
+.stat-sub { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-size: 11px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;
+}
+
+/* ── Tables ─────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left; padding: 10px 14px;
+  font-size: 10px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  font-size: 12px; white-space: nowrap;
+}
+tr:hover td { background: var(--surface2); }
+tr.clickable { cursor: pointer; }
+
+/* ── Badges ─────────────────────────────────────────── */
+.badge {
+  display: inline-block; padding: 3px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-green { background: var(--green-dim); color: var(--green); }
+.badge-orange { background: var(--orange-dim); color: var(--orange); }
+.badge-red { background: var(--red-dim); color: var(--red); }
+.badge-cyan { background: var(--cyan-dim); color: var(--cyan); }
+.badge-accent { background: var(--accent-glow); color: var(--accent); }
+.badge-dim { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+
+/* ── Buttons ────────────────────────────────────────── */
+.btn {
+  padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface2); color: var(--text);
+  font-family: inherit; font-size: 11px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; display: inline-flex;
+  align-items: center; gap: 6px;
+}
+.btn:hover { border-color: var(--accent); background: var(--accent-glow); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-danger { border-color: var(--red); color: var(--red); }
+.btn-danger:hover { background: var(--red-dim); }
+.btn-sm { padding: 5px 10px; font-size: 10px; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── Logs ────────────────────────────────────────────── */
+.log-viewer {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  max-height: 500px; overflow-y: auto;
+  font-size: 11px; line-height: 1.7;
+  color: var(--text-dim);
+  white-space: pre-wrap; word-break: break-all;
+}
+
+/* ── Search ──────────────────────────────────────────── */
+.search-bar {
+  width: 100%; padding: 10px 14px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  font-family: inherit; font-size: 12px;
+  outline: none; transition: border-color 0.15s;
+  margin-bottom: 14px;
+}
+.search-bar:focus { border-color: var(--accent); }
+.search-bar::placeholder { color: var(--text-muted); }
+
+/* ── Detail Panel ────────────────────────────────────── */
+.detail-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px;
+}
+.detail-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--accent-glow); border: 2px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--accent);
+  overflow: hidden;
+}
+.detail-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.detail-name { font-size: 18px; font-weight: 700; }
+.detail-email { font-size: 12px; color: var(--text-dim); }
+.detail-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 16px;
+}
+.detail-field { }
+.detail-field .label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+.detail-field .value { font-size: 13px; color: var(--text); margin-top: 2px; }
+
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text-dim); cursor: pointer;
+  background: none; border: none; font-family: inherit;
+  margin-bottom: 16px; padding: 4px 0;
+}
+.back-btn:hover { color: var(--accent); }
+
+/* ── Health indicator ────────────────────────────────── */
+.health-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+.health-item {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px;
+  text-align: center;
+}
+.health-item .label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+.health-item .value { font-size: 14px; font-weight: 600; margin-top: 4px; }
+
+/* ── Loading / Empty ─────────────────────────────────── */
+.loading {
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px; color: var(--text-muted); font-size: 12px;
+}
+.spinner {
+  width: 16px; height: 16px; border: 2px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.6s linear infinite; margin-right: 10px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty { text-align: center; padding: 40px; color: var(--text-muted); font-size: 12px; }
+
+/* ── Toast ────────────────────────────────────────────── */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 8px; z-index: 999;
+}
+.toast {
+  padding: 10px 16px; border-radius: 8px;
+  font-size: 12px; font-family: inherit;
+  animation: slideIn 0.2s ease-out;
+  border: 1px solid;
+}
+.toast-success { background: var(--green-dim); color: var(--green); border-color: rgba(34,197,94,0.3); }
+.toast-error { background: var(--red-dim); color: var(--red); border-color: rgba(239,68,68,0.3); }
+.toast-info { background: var(--accent-glow); color: var(--accent); border-color: rgba(99,102,241,0.3); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ── Refresh timer ───────────────────────────────────── */
+.refresh-bar {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10px; color: var(--text-muted);
+}
+.refresh-bar button {
+  background: none; border: none; color: var(--accent);
+  cursor: pointer; font-family: inherit; font-size: 10px;
+}
+.refresh-bar button:hover { text-decoration: underline; }
+
+/* ── Responsive ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .detail-grid { grid-template-columns: 1fr; }
+  .main { padding: 16px; }
+  .nav { overflow-x: auto; }
+}
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">🤖 Otto<span>Admin</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="refresh-bar">
+        <span id="lastRefresh">—</span>
+        <button onclick="refreshCurrentView()">↻ refresh</button>
+      </div>
+      <div class="topbar-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Connected</span>
+      </div>
+      <button onclick="localStorage.removeItem('otto_admin_token');location.reload()" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:4px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit">Logout</button>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <button class="nav-btn active" data-view="overview" onclick="navigate('overview')">Overview</button>
+    <button class="nav-btn" data-view="prospects" onclick="navigate('prospects')">Prospects</button>
+    <button class="nav-btn" data-view="users" onclick="navigate('users')">Users</button>
+    <button class="nav-btn" data-view="pool" onclick="navigate('pool')">VPS Pool</button>
+    <button class="nav-btn" data-view="logs" onclick="navigate('logs')">Logs</button>
+    <button class="nav-btn" data-view="controls" onclick="navigate('controls')">Controls</button>
+  </div>
+
+  <!-- Main content -->
+  <div class="main" id="mainContent">
+    <div class="loading"><div class="spinner"></div> Loading admin dashboard...</div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toasts"></div>
+
+<script>
+// ─── State ──────────────────────────────────────────────────────────────────
+
+const API = window.location.origin + '/api/admin';
+let TOKEN = null;
+let currentView = 'overview';
+let refreshTimer = null;
+let overviewData = null;
+let usersData = null;
+let selectedUserId = null;
+
+// ─── Auth ───────────────────────────────────────────────────────────────────
+
+function getToken() {
+  // Try URL param first (from redirect), then localStorage
+  const params = new URLSearchParams(window.location.search);
+  const urlToken = params.get('token');
+  if (urlToken) {
+    localStorage.setItem('otto_admin_token', urlToken);
+    // Clean URL
+    window.history.replaceState({}, '', window.location.pathname);
+    return urlToken;
+  }
+  return localStorage.getItem('otto_admin_token');
+}
+
+async function api(path, opts = {}) {
+  const url = API + path;
+  const res = await fetch(url, {
+    ...opts,
+    headers: {
+      'Authorization': `Bearer ${TOKEN}`,
+      'Content-Type': 'application/json',
+      ...opts.headers,
+    },
+  });
+  if (res.status === 401 || res.status === 403) {
+    toast('Session expired or unauthorized', 'error');
+    localStorage.removeItem('otto_admin_token');
+    TOKEN = null;
+    document.getElementById('mainContent').innerHTML = `
+      <div class="empty">
+        <p style="font-size:16px;margin-bottom:12px">🔒 Session expired</p>
+        <p style="color:var(--text-dim);margin-bottom:20px">Sign in again</p>
+        <div id="adminGoogleBtn"></div>
+      </div>`;
+    initAdminGoogle();
+    return null;
+  }
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error || res.statusText);
+  }
+  return res.json();
+}
+
+// ─── Toast ──────────────────────────────────────────────────────────────────
+
+function toast(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+// ─── Navigation ─────────────────────────────────────────────────────────────
+
+function navigate(view) {
+  currentView = view;
+  selectedUserId = null;
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === view);
+  });
+  renderView();
+}
+
+function refreshCurrentView() {
+  renderView();
+  updateRefreshTime();
+}
+
+function updateRefreshTime() {
+  document.getElementById('lastRefresh').textContent =
+    new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+function startAutoRefresh() {
+  // Disabled — was causing page reloads that interrupt emergency operations
+  // Manual refresh via the ↻ button in each view
+}
+
+// ─── Views ──────────────────────────────────────────────────────────────────
+
+async function renderView() {
+  const main = document.getElementById('mainContent');
+
+  try {
+    switch (currentView) {
+      case 'overview': await renderOverview(main); break;
+      case 'users':
+        if (selectedUserId) await renderUserDetail(main, selectedUserId);
+        else await renderUsers(main);
+        break;
+      case 'prospects': await renderProspects(main); break;
+      case 'pool': await renderPool(main); break;
+      case 'logs': await renderLogs(main); break;
+      case 'controls': await renderControls(main); break;
+    }
+    updateRefreshTime();
+  } catch (err) {
+    main.innerHTML = `<div class="empty" style="color:var(--red)">Error: ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+// ── Overview ────────────────────────────────────────────────────────────────
+
+async function renderOverview(el) {
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading overview...</div>';
+
+  const data = await api('/overview');
+  if (!data) return;
+  overviewData = data;
+
+  const pm2Html = data.pm2.map(p => {
+    if (p.error) return `<div class="health-item"><div class="label">PM2</div><div class="value" style="color:var(--red)">${escapeHtml(p.error)}</div></div>`;
+    const upMs = p.uptime ? Date.now() - p.uptime : 0;
+    const upStr = upMs > 0 ? formatDuration(upMs) : '—';
+    const memMB = p.memory ? Math.round(p.memory / 1024 / 1024) : 0;
+    const statusColor = p.status === 'online' ? 'var(--green)' : 'var(--red)';
+    return `
+      <div class="health-item">
+        <div class="label">${escapeHtml(p.name)}</div>
+        <div class="value" style="color:${statusColor}">${p.status}</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:4px">${upStr} · ${memMB}MB · ${p.restarts} restarts</div>
+      </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value accent">${data.totalUsers}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Subs</div>
+        <div class="stat-value green">${data.activeSubs}</div>
+        <div class="stat-sub">${data.freeUsers || 0} free · ${data.paidUsers || 0} paid</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Monthly Revenue</div>
+        <div class="stat-value">€${data.monthlyRevenue}</div>
+        ${data.topupRevenue > 0 ? `<div class="stat-sub">+€${data.topupRevenue} topups</div>` : ''}
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active VPS</div>
+        <div class="stat-value green">${data.vps.active}</div>
+        <div class="stat-sub">${data.vps.ready} ready · ${data.vps.provisioning} provisioning</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pool VPS</div>
+        <div class="stat-value">${data.vps.ready}</div>
+        <div class="stat-sub">${data.vps.stopped} stopped</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total AI Usage</div>
+        <div class="stat-value orange">${formatCredits(data.totalAiUsage)}</div>
+        <div class="stat-sub">credits used platform-wide</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">PM2 Processes</div>
+      <div class="health-grid">${pm2Html}</div>
+    </div>
+
+    <div style="font-size:10px;color:var(--text-muted);text-align:right">
+      Auto-refresh every 30s · ${data.timestamp}
+    </div>
+  `;
+}
+
+// ── Users ───────────────────────────────────────────────────────────────────
+
+async function renderUsers(el) {
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading users...</div>';
+
+  const data = await api('/users');
+  if (!data) return;
+  usersData = data.users;
+
+  el.innerHTML = `
+    <input class="search-bar" type="text" placeholder="Search by email, name, or plan..." id="userSearch" oninput="filterUsers()">
+    <div class="card">
+      <div class="card-title">All Users (${data.users.length})</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>VPS IP</th>
+              <th>AI Usage</th>
+              <th>Signed Up</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            ${renderUserRows(data.users)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function renderUserRows(userList) {
+  if (!userList.length) return '<tr><td colspan="6" class="empty">No users found</td></tr>';
+  return userList.map(u => {
+    const plan = u.subscription?.plan || '—';
+    const subStatus = u.subscription?.status || 'none';
+    const ip = u.instance?.ip_address || '—';
+    const vpsStatus = u.instance?.status || 'none';
+    const used = u.subscription?.ai_credits_used || 0;
+    const limit = (u.subscription?.ai_credits_limit || 0) + (u.subscription?.ai_credits_bonus || 0);
+    const pct = limit > 0 ? Math.round((used / limit) * 100) : 0;
+    const usageColor = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--orange)' : 'var(--text)';
+    const statusBadge = subStatus === 'active' ? 'badge-green' :
+                        subStatus === 'past_due' ? 'badge-orange' : 'badge-red';
+    const vpsBadge = vpsStatus === 'active' ? 'badge-green' :
+                     vpsStatus === 'ready' ? 'badge-cyan' : 'badge-red';
+    const date = u.created_at ? new Date(u.created_at).toLocaleDateString() : '—';
+    return `
+      <tr class="clickable" onclick="viewUser('${u.id}')">
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${u.avatar_url ? `<img src="${escapeHtml(u.avatar_url)}" style="width:24px;height:24px;border-radius:50%">` : '<span style="font-size:16px">👤</span>'}
+            <div>
+              <div style="font-weight:600;font-size:12px">${escapeHtml(u.name || u.email || '—')}</div>
+              <div style="font-size:10px;color:var(--text-muted)">${escapeHtml(u.email || '')}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge ${plan === 'free' ? 'badge-dim' : 'badge-accent'}">${plan}</span></td>
+        <td><span class="badge ${statusBadge}">${subStatus}</span> <span class="badge ${vpsBadge}" style="margin-left:4px">${vpsStatus}</span></td>
+        <td style="font-size:11px;color:var(--text-dim)">${ip}</td>
+        <td>
+          <div style="color:${usageColor};font-weight:600">${formatCredits(used)}</div>
+          <div style="font-size:9px;color:var(--text-muted)">${limit > 0 ? `/ ${formatCredits(limit)} (${pct}%)` : 'no limit'}</div>
+        </td>
+        <td style="font-size:11px;color:var(--text-dim)">${date}</td>
+      </tr>`;
+  }).join('');
+}
+
+function filterUsers() {
+  const q = document.getElementById('userSearch').value.toLowerCase();
+  const filtered = usersData.filter(u =>
+    (u.email || '').toLowerCase().includes(q) ||
+    (u.name || '').toLowerCase().includes(q) ||
+    (u.subscription?.plan || '').toLowerCase().includes(q)
+  );
+  document.getElementById('usersTableBody').innerHTML = renderUserRows(filtered);
+}
+
+// ── User Detail ─────────────────────────────────────────────────────────────
+
+async function viewUser(userId) {
+  selectedUserId = userId;
+  currentView = 'users';
+  await renderUserDetail(document.getElementById('mainContent'), userId);
+}
+
+async function renderUserDetail(el, userId) {
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading user...</div>';
+
+  const data = await api(`/users/${userId}`);
+  if (!data) return;
+
+  const u = data.user;
+  const sub = data.subscriptions[0] || {};
+  const inst = data.instances[0] || {};
+
+  const used = sub.ai_credits_used || 0;
+  const limit = (sub.ai_credits_limit || 0) + (sub.ai_credits_bonus || 0);
+  const pct = limit > 0 ? Math.round((used / limit) * 100) : 0;
+  const periodEnd = sub.current_period_end ? new Date(sub.current_period_end).toLocaleDateString() : '—';
+
+  const topupRows = data.topups.length
+    ? data.topups.map(t => `
+        <tr>
+          <td style="font-size:11px">${new Date(t.created_at).toLocaleDateString()}</td>
+          <td style="font-size:11px">€${(t.amount_paid_cents / 100).toFixed(2)}</td>
+          <td style="font-size:11px">${formatCredits(t.credits_granted_cents)}</td>
+        </tr>`).join('')
+    : '<tr><td colspan="3" style="color:var(--text-muted);font-size:11px">No topups</td></tr>';
+
+  el.innerHTML = `
+    <button class="back-btn" onclick="selectedUserId=null;navigate('users')">← Back to Users</button>
+
+    <div class="detail-header">
+      <div class="detail-avatar">
+        ${u.avatar_url ? `<img src="${escapeHtml(u.avatar_url)}">` : '👤'}
+      </div>
+      <div>
+        <div class="detail-name">${escapeHtml(u.name || 'Unknown')}</div>
+        <div class="detail-email">${escapeHtml(u.email || '')}</div>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="card">
+        <div class="card-title">Subscription</div>
+        <div class="detail-field"><div class="label">Plan</div><div class="value"><span class="badge ${(sub.plan === 'free') ? 'badge-dim' : 'badge-accent'}">${sub.plan || '—'}</span></div></div>
+        <div class="detail-field" style="margin-top:8px"><div class="label">Status</div><div class="value"><span class="badge ${sub.status === 'active' ? 'badge-green' : 'badge-red'}">${sub.status || '—'}</span></div></div>
+        <div class="detail-field" style="margin-top:8px"><div class="label">Period Ends</div><div class="value">${periodEnd}</div></div>
+        <div class="detail-field" style="margin-top:8px"><div class="label">Stripe Customer</div><div class="value" style="font-size:11px;color:var(--text-dim)">${escapeHtml(u.stripe_customer_id || '—')}</div></div>
+        <div class="detail-field" style="margin-top:8px"><div class="label">Signed Up</div><div class="value">${u.created_at ? new Date(u.created_at).toLocaleString() : '—'}</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">AI Usage</div>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:20px;font-weight:700;color:${pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--orange)' : 'var(--accent)'}">${formatCredits(used)}</span>
+            <span style="font-size:12px;color:var(--text-muted)">/ ${formatCredits(limit)}</span>
+          </div>
+          <div style="height:6px;background:var(--bg);border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${Math.min(pct, 100)}%;background:${pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--orange)' : 'var(--accent)'};border-radius:3px;transition:width 0.3s"></div>
+          </div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px">${pct}% used${sub.ai_credits_bonus > 0 ? ` · ${formatCredits(sub.ai_credits_bonus)} bonus` : ''}</div>
+        </div>
+
+        <div class="card-title" style="margin-top:16px">Credit Topups</div>
+        <table>
+          <thead><tr><th>Date</th><th>Paid</th><th>Credits</th></tr></thead>
+          <tbody>${topupRows}</tbody>
+        </table>
+      </div>
+    </div>
+
+    ${inst.id ? `
+    <div class="card">
+      <div class="card-title">Instance</div>
+      <div class="detail-grid" style="margin-bottom:0">
+        <div>
+          <div class="detail-field"><div class="label">Instance ID</div><div class="value" style="font-size:11px">${inst.id}</div></div>
+          <div class="detail-field" style="margin-top:8px"><div class="label">IP Address</div><div class="value">${inst.ip_address || '—'}</div></div>
+          <div class="detail-field" style="margin-top:8px"><div class="label">Status</div><div class="value"><span class="badge ${inst.status === 'active' ? 'badge-green' : 'badge-red'}">${inst.status || '—'}</span></div></div>
+          <div class="detail-field" style="margin-top:8px"><div class="label">Gateway Port</div><div class="value">${inst.gateway_port || '—'}</div></div>
+        </div>
+        <div>
+          <div class="detail-field"><div class="label">SSH</div><div class="value" style="font-size:10px;color:var(--cyan);cursor:pointer" onclick="copyText('ssh root@${inst.ip_address}')">ssh root@${inst.ip_address} 📋</div></div>
+          <div id="healthData" style="margin-top:16px">
+            <button class="btn btn-sm" onclick="checkHealthFull('${inst.id}')">🔍 Full Health Check</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EMERGENCY PANEL ═══ -->
+    <div class="card" style="border-color:var(--orange);border-width:2px">
+      <div class="card-title" style="color:var(--orange)">⚡ Emergency Controls</div>
+
+      <!-- Quick Diagnostic — one-click full check -->
+      <div style="margin-bottom:16px">
+        <button class="btn" onclick="runQuickDiag('${inst.id}')" style="width:100%;padding:12px;font-size:14px;font-weight:700;background:var(--orange-dim);color:var(--orange);border:2px solid var(--orange);border-radius:10px">🩺 Quick Diagnostic</button>
+        <div id="diagResult" style="margin-top:10px;display:none"></div>
+      </div>
+
+      <div class="detail-grid" style="margin-bottom:0">
+        <!-- Gateway Controls -->
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:10px">Gateway</div>
+          <div class="btn-group" style="flex-direction:column;gap:8px">
+            <button class="btn btn-sm" onclick="restartGatewayManual('${inst.id}')" style="background:var(--orange-dim);color:var(--orange);border-color:var(--orange)">↻ Restart Gateway (manual)</button>
+            <button class="btn btn-sm btn-danger" onclick="instanceAction('${inst.id}', 'reboot-vps', 'REBOOT entire VPS? This will cause ~60s downtime.')">🔄 Reboot VPS</button>
+          </div>
+        </div>
+
+        <!-- Credit Controls -->
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:10px">Credits</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-sm" onclick="addCredits('${sub.id}', 500)">+$5</button>
+            <button class="btn btn-sm" onclick="addCredits('${sub.id}', 1000)">+$10</button>
+            <button class="btn btn-sm" onclick="addCredits('${sub.id}', 2500)">+$25</button>
+            <button class="btn btn-sm" onclick="addCreditsCustom('${sub.id}')">Custom...</button>
+          </div>
+          <button class="btn btn-sm btn-danger" style="margin-top:8px" onclick="resetUsage('${sub.id}')">Reset Usage Counter</button>
+        </div>
+      </div>
+
+      <!-- Agents -->
+      <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:11px;font-weight:600;color:var(--text)">Agents</span>
+          <button class="btn btn-sm" onclick="loadAgents('${inst.id}')">Load</button>
+        </div>
+        <div id="agentsPanel" style="font-size:11px;color:var(--text-dim)">Click Load to fetch agent list</div>
+      </div>
+
+      <!-- Cron Jobs -->
+      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:11px;font-weight:600;color:var(--text)">Cron Jobs</span>
+          <button class="btn btn-sm" onclick="loadCrons('${inst.id}')">Load</button>
+        </div>
+        <div id="cronsPanel" style="font-size:11px;color:var(--text-dim)">Click Load to fetch cron list</div>
+      </div>
+
+      <!-- VPS Logs Viewer -->
+      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <span style="font-size:11px;font-weight:600;color:var(--text)">📋 VPS Logs</span>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <button class="btn btn-sm" onclick="fetchInstanceLogs('${inst.id}','gateway')">Gateway</button>
+            <button class="btn btn-sm" onclick="fetchInstanceLogs('${inst.id}','openclaw')">OpenClaw</button>
+            <button class="btn btn-sm" onclick="fetchInstanceLogs('${inst.id}','sessions')">Sessions</button>
+            <button class="btn btn-sm" onclick="fetchInstanceLogs('${inst.id}','system')">System</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
+          <input id="logFilter" type="text" placeholder="Filter (e.g. error, timeout, agent-name)" style="flex:1;padding:4px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px">
+          <select id="logLines" style="padding:4px 6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px">
+            <option value="50">50 lines</option>
+            <option value="100" selected>100 lines</option>
+            <option value="200">200 lines</option>
+            <option value="500">500 lines</option>
+          </select>
+        </div>
+        <div id="logsPanel" class="log-viewer" style="height:250px;font-size:10px;white-space:pre-wrap;overflow:auto;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text-dim);font-family:monospace">Click a log type above to fetch logs</div>
+      </div>
+
+      <!-- Backend Logs -->
+      <div style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:11px;font-weight:600;color:var(--text)">📋 Backend Logs (PM2)</span>
+          <button class="btn btn-sm" onclick="fetchBackendLogs()">Fetch</button>
+        </div>
+        <div id="backendLogsPanel" class="log-viewer" style="height:200px;font-size:10px;white-space:pre-wrap;overflow:auto;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text-dim);font-family:monospace">Click Fetch to load backend PM2 logs</div>
+      </div>
+
+      <!-- Output Log -->
+      <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
+        <div style="font-size:11px;font-weight:600;color:var(--text);margin-bottom:10px">Action Log</div>
+        <div id="emergencyLog" class="log-viewer" style="height:120px;font-size:10px"></div>
+      </div>
+    </div>
+    ` : '<div class="card"><div class="card-title">Instance</div><div class="empty">No instance assigned</div></div>'}
+  `;
+}
+
+async function instanceAction(id, action, confirmMsg) {
+  if (!confirm(confirmMsg)) return;
+  try {
+    toast(`Executing ${action}...`, 'info');
+    emergencyLog(`→ ${action}...`);
+    const data = await api(`/instances/${id}/${action}`, { method: 'POST' });
+    if (data) { toast(`${action} completed`, 'success'); emergencyLog(`✓ ${action} done`); }
+  } catch (err) {
+    toast(`${action} failed: ${err.message}`, 'error');
+    emergencyLog(`✗ ${action} FAILED: ${err.message}`);
+  }
+}
+
+function emergencyLog(msg) {
+  const el = document.getElementById('emergencyLog');
+  if (!el) return;
+  const ts = new Date().toLocaleTimeString();
+  el.textContent += `[${ts}] ${msg}\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+// ── Full Health Check (non-systemd) ──
+async function checkHealthFull(instanceId) {
+  const el = document.getElementById('healthData');
+  el.innerHTML = '<div class="loading" style="padding:8px"><div class="spinner"></div> Checking (SSH)...</div>';
+  try {
+    const data = await api(`/instances/${instanceId}/health-full`);
+    if (!data) return;
+    const gwColor = data.gateway === 'running' ? 'var(--green)' : 'var(--red)';
+    el.innerHTML = `
+      <div class="health-grid">
+        <div class="health-item"><div class="label">Gateway</div><div class="value" style="color:${gwColor}">${data.gateway}</div></div>
+        <div class="health-item"><div class="label">Memory</div><div class="value">${data.memory || '—'}</div></div>
+        <div class="health-item"><div class="label">Disk</div><div class="value">${data.disk || '—'}</div></div>
+        <div class="health-item"><div class="label">OpenClaw</div><div class="value">${data.openclaw_version || '—'}</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:var(--text-dim)">
+        <div><strong>Agents:</strong> ${data.agents || 'none'}</div>
+        <div><strong>Crons:</strong> ${data.crons || 'none'}</div>
+        <div><strong>Uptime:</strong> ${data.uptime || '—'}</div>
+        ${data.gateway_pid ? `<div><strong>PID:</strong> ${data.gateway_pid}</div>` : ''}
+      </div>
+      ${data.error ? `<div style="margin-top:8px;color:var(--red)">⚠ ${escapeHtml(data.error)}</div>` : ''}
+      <div style="margin-top:6px;font-size:9px;color:var(--text-muted)">Checked: ${data.checkedAt}</div>
+    `;
+    emergencyLog(`✓ Health check: gateway=${data.gateway}, mem=${data.memory}, disk=${data.disk}`);
+  } catch (err) {
+    el.innerHTML = `<div style="color:var(--red);font-size:11px">Health check failed: ${escapeHtml(err.message)}</div>`;
+    emergencyLog(`✗ Health check FAILED: ${err.message}`);
+  }
+}
+
+// ── Gateway Restart (manual — for broken systemd) ──
+async function restartGatewayManual(instanceId) {
+  if (!confirm('Restart gateway using manual method (kill + run)? Chat will disconnect briefly.')) return;
+  try {
+    toast('Restarting gateway...', 'info');
+    emergencyLog('→ Restarting gateway (manual)...');
+    const data = await api(`/instances/${instanceId}/restart-gateway-manual`, { method: 'POST' });
+    if (data?.success) {
+      toast('Gateway restarted! PID: ' + data.pid, 'success');
+      emergencyLog(`✓ Gateway restarted, PID: ${data.pid}`);
+    } else {
+      toast('Gateway restart may have failed', 'error');
+      emergencyLog(`⚠ Gateway restart — success=${data?.success}, pid=${data?.pid}`);
+    }
+  } catch (err) {
+    toast(`Restart failed: ${err.message}`, 'error');
+    emergencyLog(`✗ Gateway restart FAILED: ${err.message}`);
+  }
+}
+
+// ── Add Credits ──
+async function addCredits(subId, amountCents) {
+  if (!subId) { toast('No subscription found', 'error'); return; }
+  if (!confirm(`Add $${(amountCents/100).toFixed(2)} bonus credits?`)) return;
+  try {
+    emergencyLog(`→ Adding $${(amountCents/100).toFixed(2)} credits...`);
+    const data = await api(`/subscriptions/${subId}/add-credits`, {
+      method: 'POST', body: JSON.stringify({ amount_cents: amountCents }),
+    });
+    if (data?.success) {
+      toast(`Added $${(amountCents/100).toFixed(2)} — remaining: $${(data.credits.remaining_cents/100).toFixed(2)}`, 'success');
+      emergencyLog(`✓ Credits added. Total limit: $${(data.credits.total_limit_cents/100).toFixed(2)}, remaining: $${(data.credits.remaining_cents/100).toFixed(2)}`);
+    }
+  } catch (err) {
+    toast(`Failed: ${err.message}`, 'error');
+    emergencyLog(`✗ Add credits FAILED: ${err.message}`);
+  }
+}
+
+async function addCreditsCustom(subId) {
+  const amount = prompt('Amount in dollars to add (e.g. 50):');
+  if (!amount) return;
+  const cents = Math.round(parseFloat(amount) * 100);
+  if (isNaN(cents) || cents <= 0) { toast('Invalid amount', 'error'); return; }
+  await addCredits(subId, cents);
+}
+
+async function resetUsage(subId) {
+  if (!subId) { toast('No subscription found', 'error'); return; }
+  if (!confirm('RESET usage counter to $0? This cannot be undone.')) return;
+  try {
+    emergencyLog('→ Resetting usage counter...');
+    const data = await api(`/subscriptions/${subId}/reset-usage`, { method: 'POST' });
+    if (data?.success) {
+      toast('Usage reset to $0', 'success');
+      emergencyLog(`✓ Usage reset (was $${(data.previous_used_cents/100).toFixed(2)})`);
+    }
+  } catch (err) {
+    toast(`Failed: ${err.message}`, 'error');
+    emergencyLog(`✗ Reset FAILED: ${err.message}`);
+  }
+}
+
+// ── Load Agents ──
+async function loadAgents(instanceId) {
+  const el = document.getElementById('agentsPanel');
+  el.innerHTML = '<div class="loading" style="padding:4px"><div class="spinner"></div> Loading...</div>';
+  try {
+    const data = await api(`/instances/${instanceId}/agents`);
+    if (data?.parsed?.length) {
+      el.innerHTML = data.parsed.map(a =>
+        `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:16px">${a.emoji || '🤖'}</span>
+          <div>
+            <div style="font-weight:600;color:var(--text)">${escapeHtml(a.name || a.id)}</div>
+            <div style="font-size:10px;color:var(--text-muted)">${escapeHtml(a.theme || a.id)}</div>
+          </div>
+        </div>`
+      ).join('');
+    } else {
+      el.innerHTML = `<pre style="white-space:pre-wrap;color:var(--text-dim)">${escapeHtml(data?.raw || 'No agents found')}</pre>`;
+    }
+    emergencyLog(`✓ Loaded agents`);
+  } catch (err) {
+    el.innerHTML = `<span style="color:var(--red)">${escapeHtml(err.message)}</span>`;
+    emergencyLog(`✗ Load agents FAILED: ${err.message}`);
+  }
+}
+
+// ── Load Crons ──
+async function loadCrons(instanceId) {
+  const el = document.getElementById('cronsPanel');
+  el.innerHTML = '<div class="loading" style="padding:4px"><div class="spinner"></div> Loading...</div>';
+  try {
+    const data = await api(`/instances/${instanceId}/crons`);
+    // parsed can be an array directly OR { version, jobs: [...] } depending on openclaw version
+    const cronList = Array.isArray(data?.parsed) ? data.parsed : data?.parsed?.jobs;
+    if (cronList && cronList.length) {
+      // Use parsed JSON for rich display
+      const cronCards = cronList.map(c => {
+        const statusColor = c.state?.lastRunStatus === 'error' ? 'var(--red)' : c.state?.lastRunStatus === 'ok' ? 'var(--green)' : 'var(--text-dim)';
+        const lastRun = c.state?.lastRunAtMs ? new Date(c.state.lastRunAtMs).toLocaleString() : 'never';
+        const lastErr = c.state?.lastError ? `<div style="color:var(--red);font-size:10px;margin-top:4px">⚠ ${escapeHtml(c.state.lastError.slice(0, 120))}</div>` : '';
+        // Compute schedule display from file-based config (source of truth)
+        const expr = c.schedule?.expr || c.schedule || '';
+        const tz = c.schedule?.tz || 'Europe/Paris';
+        const cronHuman = (() => {
+          const p = String(expr).trim().split(/\s+/);
+          if (p.length !== 5) return expr;
+          const days = {'0':'Sun','1':'Mon','2':'Tue','3':'Wed','4':'Thu','5':'Fri','6':'Sat','*':'Daily'};
+          const time = p[1].padStart(2,'0') + ':' + p[0].padStart(2,'0');
+          const dow = p[4];
+          if (dow === '*') return 'Daily at ' + time;
+          if (dow === '1-5') return 'Mon-Fri at ' + time;
+          const d = dow.split(',').map(x => days[x]||x).join(', ');
+          return d + ' at ' + time;
+        })();
+        return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <span style="font-weight:700;color:var(--text)">${escapeHtml(c.name || c.id)}</span>
+              <span style="font-size:11px;color:var(--accent);margin-left:8px;font-weight:600">${escapeHtml(cronHuman)}</span>
+              <span style="font-size:9px;color:var(--text-dim);margin-left:6px">(${escapeHtml(expr)} ${escapeHtml(tz)})</span>
+            </div>
+            <button class="btn btn-sm" style="font-size:10px" onclick="triggerCron('${instanceId}','${c.id}','${escapeHtml(c.name || c.id)}')">▶ Run ${escapeHtml(c.name || c.id.slice(0,8))}</button>
+          </div>
+          <div style="font-size:10px;color:var(--text-dim);margin-top:4px">${escapeHtml(c.description || '')}</div>
+          <div style="font-size:10px;margin-top:4px;display:flex;gap:12px">
+            <span>Agent: <strong style="color:var(--text)">${escapeHtml(c.agentId || '?')}</strong></span>
+            <span>Last: <strong style="color:${statusColor}">${lastRun}</strong></span>
+            <span style="color:${c.enabled ? 'var(--green)' : 'var(--red)'}">${c.enabled ? '● enabled' : '○ disabled'}</span>
+          </div>
+          ${lastErr}
+        </div>`;
+      }).join('');
+      el.innerHTML = cronCards;
+    } else if (data?.raw) {
+      // Fallback to raw text
+      el.innerHTML = `<pre style="white-space:pre-wrap;color:var(--text-dim)">${escapeHtml(data.raw)}</pre>`;
+    } else {
+      el.innerHTML = '<span style="color:var(--text-muted)">No crons found</span>';
+    }
+    emergencyLog(`✓ Loaded ${cronList?.length || 0} crons`);
+  } catch (err) {
+    el.innerHTML = `<span style="color:var(--red)">${escapeHtml(err.message)}</span>`;
+    emergencyLog(`✗ Load crons FAILED: ${err.message}`);
+  }
+}
+
+async function triggerCron(instanceId, cronId, cronName) {
+  if (!confirm(`Run "${cronName || cronId}" now?`)) return;
+  try {
+    const label = cronName || cronId.slice(0,8);
+    emergencyLog(`→ Triggering "${label}"…`);
+    toast(`Triggering ${label}...`, 'info');
+    const data = await api(`/instances/${instanceId}/crons/${cronId}/run`, { method: 'POST' });
+    if (data?.success) {
+      toast(`${label} triggered`, 'success');
+      emergencyLog(`✓ "${label}" triggered: ${data.stdout || 'ok'}`);
+    } else {
+      toast(`${label} may have failed`, 'error');
+      emergencyLog(`⚠ "${label}" output: ${data?.stderr || data?.stdout || 'unknown'}`);
+    }
+  } catch (err) {
+    toast(`Failed: ${err.message}`, 'error');
+    emergencyLog(`✗ Trigger cron FAILED: ${err.message}`);
+  }
+}
+
+// ── Quick Diagnostic ──
+async function runQuickDiag(instanceId) {
+  const el = document.getElementById('diagResult');
+  el.style.display = 'block';
+  el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--orange)"><div class="spinner" style="margin:0 auto 8px"></div>Running full diagnostic...</div>';
+  emergencyLog('→ Running quick diagnostic...');
+  try {
+    const d = await api(`/instances/${instanceId}/quick-diag`);
+    const statusColor = d.status === 'ok' ? 'var(--green)' : d.status === 'critical' ? 'var(--red)' : 'var(--orange)';
+    const statusIcon = d.status === 'ok' ? '✅' : d.status === 'critical' ? '🔴' : '⚠️';
+    let html = `
+      <div style="background:${d.status === 'ok' ? 'rgba(52,211,153,0.1)' : d.status === 'critical' ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.1)'};border:2px solid ${statusColor};border-radius:10px;padding:14px">
+        <div style="font-size:16px;font-weight:700;color:${statusColor};margin-bottom:10px">${statusIcon} ${d.summary || d.status.toUpperCase()}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px">
+          <div style="background:var(--bg);border-radius:6px;padding:8px">
+            <div style="color:var(--text-dim);margin-bottom:2px">Gateway</div>
+            <div style="color:${/DOWN/.test(d.gateway) ? 'var(--red)' : 'var(--green)'};font-weight:600">${escapeHtml(d.gateway || '?')}</div>
+          </div>
+          <div style="background:var(--bg);border-radius:6px;padding:8px">
+            <div style="color:var(--text-dim);margin-bottom:2px">Credits</div>
+            <div style="color:${d.credits?.pct_used > 90 ? 'var(--red)' : d.credits?.pct_used > 70 ? 'var(--orange)' : 'var(--green)'};font-weight:600">
+              ${d.credits?.remaining || '?'} left (${d.credits?.pct_used || 0}% used)
+            </div>
+          </div>
+          <div style="background:var(--bg);border-radius:6px;padding:8px">
+            <div style="color:var(--text-dim);margin-bottom:2px">Disk</div>
+            <div style="font-weight:600;color:var(--text)">${d.disk?.used_pct || '?'} used, ${d.disk?.available || '?'} free</div>
+          </div>
+          <div style="background:var(--bg);border-radius:6px;padding:8px">
+            <div style="color:var(--text-dim);margin-bottom:2px">Memory</div>
+            <div style="font-weight:600;color:var(--text)">${escapeHtml(d.memory || '?')}</div>
+          </div>
+          <div style="background:var(--bg);border-radius:6px;padding:8px">
+            <div style="color:var(--text-dim);margin-bottom:2px">Agents</div>
+            <div style="font-weight:600;color:var(--text)">${Array.isArray(d.agents) ? d.agents.join(', ') : escapeHtml(String(d.agents || '?'))}</div>
+          </div>
+          <div style="background:var(--bg);border-radius:6px;padding:8px">
+            <div style="color:var(--text-dim);margin-bottom:2px">SSH</div>
+            <div style="color:${d.ssh === 'connected' ? 'var(--green)' : 'var(--red)'};font-weight:600">${escapeHtml(d.ssh || '?')}</div>
+          </div>
+        </div>`;
+
+    // Last activity
+    if (d.last_activity && typeof d.last_activity === 'object') {
+      html += `<div style="margin-top:8px;background:var(--bg);border-radius:6px;padding:8px;font-size:11px">
+        <div style="color:var(--text-dim);margin-bottom:2px">Last Conversation</div>
+        <div style="color:var(--text)">${escapeHtml(d.last_activity.file?.split('/').pop() || '?')} — ${escapeHtml(d.last_activity.modified || '?')}</div>
+      </div>`;
+    }
+    if (d.last_message) {
+      html += `<div style="margin-top:4px;background:var(--bg);border-radius:6px;padding:8px;font-size:11px">
+        <div style="color:var(--text-dim);margin-bottom:2px">Last AI Message</div>
+        <div style="color:var(--text)">Model: ${escapeHtml(d.last_message.model || '?')} | Tokens: ${d.last_message.tokens || '?'} | Stop: ${escapeHtml(d.last_message.stopReason || '?')}</div>
+      </div>`;
+    }
+    if (d.last_error_hint) {
+      html += `<div style="margin-top:4px;background:rgba(239,68,68,0.1);border-radius:6px;padding:8px;font-size:11px">
+        <div style="color:var(--red);font-weight:600;margin-bottom:2px">⚠ Error Detected</div>
+        <div style="color:var(--text);word-break:break-all">${escapeHtml(d.last_error_hint)}</div>
+      </div>`;
+    }
+
+    // Issues list
+    if (d.issues?.length) {
+      html += `<div style="margin-top:8px;font-size:11px;color:${statusColor}">
+        ${d.issues.map(i => '<div>⚠ ' + escapeHtml(i) + '</div>').join('')}
+      </div>`;
+    }
+
+    html += '</div>';
+    el.innerHTML = html;
+    emergencyLog(`✓ Diagnostic: ${d.status} — ${d.summary || 'no issues'}`);
+  } catch (err) {
+    el.innerHTML = `<div style="background:rgba(239,68,68,0.1);border:1px solid var(--red);border-radius:8px;padding:12px;color:var(--red);font-size:12px">Failed: ${escapeHtml(err.message)}</div>`;
+    emergencyLog(`✗ Diagnostic FAILED: ${err.message}`);
+  }
+}
+
+// ── Log Viewers ──
+async function fetchInstanceLogs(instanceId, logType) {
+  const el = document.getElementById('logsPanel');
+  const filter = document.getElementById('logFilter')?.value || '';
+  const lines = document.getElementById('logLines')?.value || '100';
+  el.innerHTML = '<div style="color:var(--orange)">⏳ Fetching ' + logType + ' logs...</div>';
+  emergencyLog(`→ Fetching ${logType} logs (${lines} lines${filter ? ', filter: ' + filter : ''})...`);
+  try {
+    let url = `/instances/${instanceId}/logs?type=${logType}&lines=${lines}`;
+    if (filter) url += `&filter=${encodeURIComponent(filter)}`;
+    const data = await api(url);
+    if (data?.output) {
+      // Colorize errors/warnings
+      const colorized = escapeHtml(data.output)
+        .replace(/(error|Error|ERROR|fail|FAIL|exception|Exception)/g, '<span style="color:var(--red);font-weight:600">$1</span>')
+        .replace(/(warn|WARN|warning|Warning)/g, '<span style="color:var(--orange);font-weight:600">$1</span>')
+        .replace(/(success|ok|OK|connected|ready)/gi, '<span style="color:var(--green)">$1</span>');
+      el.innerHTML = colorized;
+      el.scrollTop = el.scrollHeight;
+      emergencyLog(`✓ ${logType} logs loaded (${data.output.split('\\n').length} lines)`);
+    } else {
+      el.innerHTML = '<span style="color:var(--text-muted)">No logs returned</span>';
+      emergencyLog(`⚠ ${logType} logs: empty`);
+    }
+  } catch (err) {
+    el.innerHTML = `<span style="color:var(--red)">Failed: ${escapeHtml(err.message)}</span>`;
+    emergencyLog(`✗ Fetch ${logType} logs FAILED: ${err.message}`);
+  }
+}
+
+async function fetchBackendLogs() {
+  const el = document.getElementById('backendLogsPanel');
+  const filter = document.getElementById('logFilter')?.value || '';
+  const lines = document.getElementById('logLines')?.value || '100';
+  el.innerHTML = '<div style="color:var(--orange)">⏳ Fetching backend PM2 logs...</div>';
+  emergencyLog(`→ Fetching backend logs (${lines} lines)...`);
+  try {
+    let url = `/backend-logs?lines=${lines}`;
+    if (filter) url += `&filter=${encodeURIComponent(filter)}`;
+    const data = await api(url);
+    if (data?.output) {
+      const colorized = escapeHtml(data.output)
+        .replace(/(error|Error|ERROR|fail|FAIL|exception|Exception)/g, '<span style="color:var(--red);font-weight:600">$1</span>')
+        .replace(/(warn|WARN|warning|Warning)/g, '<span style="color:var(--orange);font-weight:600">$1</span>')
+        .replace(/(success|ok|OK|connected|ready)/gi, '<span style="color:var(--green)">$1</span>');
+      el.innerHTML = colorized;
+      el.scrollTop = el.scrollHeight;
+      emergencyLog(`✓ Backend logs loaded`);
+    } else {
+      el.innerHTML = '<span style="color:var(--text-muted)">No logs returned</span>';
+    }
+  } catch (err) {
+    el.innerHTML = `<span style="color:var(--red)">Failed: ${escapeHtml(err.message)}</span>`;
+    emergencyLog(`✗ Fetch backend logs FAILED: ${err.message}`);
+  }
+}
+
+// ── Pool ────────────────────────────────────────────────────────────────────
+
+async function renderPool(el) {
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading pool...</div>';
+
+  const data = await api('/pool/status');
+  if (!data) return;
+
+  const rows = data.instances.map(i => {
+    const statusBadge = i.status === 'active' ? 'badge-green' :
+                        i.status === 'ready' ? 'badge-cyan' :
+                        i.status === 'provisioning' ? 'badge-orange' : 'badge-red';
+    const date = i.created_at ? new Date(i.created_at).toLocaleDateString() : '—';
+    const assigned = i.assigned_at ? new Date(i.assigned_at).toLocaleString() : '—';
+    return `
+      <tr>
+        <td style="font-size:10px;color:var(--text-dim)">${i.id.slice(0, 8)}…</td>
+        <td>${i.ip_address || '—'}</td>
+        <td><span class="badge ${statusBadge}">${i.status}</span></td>
+        <td style="font-size:11px">${i.user_id ? `<span style="cursor:pointer;color:var(--accent)" onclick="viewUser('${i.user_id}')">${i.user_id.slice(0, 8)}…</span>` : '<span style="color:var(--text-muted)">unassigned</span>'}</td>
+        <td style="font-size:11px;color:var(--text-dim)">${i.gateway_port || '—'}</td>
+        <td style="font-size:11px;color:var(--text-dim)">${i.hetzner_server_id || '—'}</td>
+        <td style="font-size:11px;color:var(--text-dim)">${date}</td>
+        <td style="font-size:11px;color:var(--text-dim)">${assigned}</td>
+      </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="stats-grid" style="margin-bottom:16px">
+      <div class="stat-card"><div class="stat-label">Total</div><div class="stat-value">${data.summary.total}</div></div>
+      <div class="stat-card"><div class="stat-label">Active</div><div class="stat-value green">${data.summary.active}</div></div>
+      <div class="stat-card"><div class="stat-label">Ready</div><div class="stat-value accent">${data.summary.ready}</div></div>
+      <div class="stat-card"><div class="stat-label">Provisioning</div><div class="stat-value orange">${data.summary.provisioning}</div></div>
+      <div class="stat-card"><div class="stat-label">Stopped</div><div class="stat-value" style="color:var(--red)">${data.summary.stopped}</div></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin:0">All Instances</div>
+        <button class="btn btn-sm" onclick="triggerProvision()">⚙ Trigger Provision</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>IP</th><th>Status</th><th>User</th><th>Port</th><th>Hetzner ID</th><th>Created</th><th>Assigned</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+async function triggerProvision() {
+  try {
+    toast('Triggering provision...', 'info');
+    const data = await api('/pool/provision', { method: 'POST', body: JSON.stringify({}) });
+    if (data) toast(data.message, 'success');
+  } catch (err) {
+    toast(`Provision failed: ${err.message}`, 'error');
+  }
+}
+
+// ── Logs ────────────────────────────────────────────────────────────────────
+
+async function renderLogs(el) {
+  el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading logs...</div>';
+
+  const proc = 'otto-backend';
+  const data = await api(`/logs?process=${proc}&lines=150`);
+  if (!data) return;
+
+  el.innerHTML = `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin:0">PM2 Logs</div>
+        <div class="btn-group">
+          <button class="btn btn-sm ${proc === 'otto-backend' ? 'active' : ''}" onclick="loadLogs('otto-backend')">Backend</button>
+          <button class="btn btn-sm" onclick="loadLogs('otto-pool')">Pool Worker</button>
+          <button class="btn btn-sm" onclick="renderLogs(document.getElementById('mainContent'))">↻</button>
+        </div>
+      </div>
+      <div class="log-viewer" id="logViewer">${escapeHtml(data.logs || 'No logs available')}</div>
+    </div>
+  `;
+
+  // Scroll to bottom
+  const viewer = document.getElementById('logViewer');
+  viewer.scrollTop = viewer.scrollHeight;
+}
+
+async function loadLogs(proc) {
+  const viewer = document.getElementById('logViewer');
+  if (!viewer) return;
+  viewer.textContent = 'Loading...';
+  try {
+    const data = await api(`/logs?process=${proc}&lines=150`);
+    if (data) {
+      viewer.textContent = data.logs || 'No logs available';
+      viewer.scrollTop = viewer.scrollHeight;
+    }
+  } catch (err) {
+    viewer.textContent = `Error: ${err.message}`;
+  }
+}
+
+// ── Controls ────────────────────────────────────────────────────────────────
+
+async function renderControls(el) {
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-title">⚠️ Platform Controls</div>
+      <p style="font-size:12px;color:var(--text-dim);margin-bottom:20px">These actions affect the live platform. Use with caution.</p>
+
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:8px">
+          <div>
+            <div style="font-weight:600;font-size:13px">Restart Backend</div>
+            <div style="font-size:11px;color:var(--text-dim)">pm2 restart otto-backend — API will be briefly unavailable</div>
+          </div>
+          <button class="btn btn-danger" onclick="restartBackend()">↻ Restart</button>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:8px">
+          <div>
+            <div style="font-weight:600;font-size:13px">Restart Pool Worker</div>
+            <div style="font-size:11px;color:var(--text-dim)">pm2 restart otto-pool — will restart provisioning cycle</div>
+          </div>
+          <button class="btn" onclick="restartPool()">↻ Restart</button>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg);border:1px solid var(--border);border-radius:8px">
+          <div>
+            <div style="font-weight:600;font-size:13px">Trigger VPS Provision</div>
+            <div style="font-size:11px;color:var(--text-dim)">Force pool worker to check and provision new VPS if needed</div>
+          </div>
+          <button class="btn" onclick="triggerProvision()">⚙ Provision</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">Quick SSH</div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px">Copy-paste SSH commands:</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--cyan)" onclick="copyText('ssh root@203.0.113.10')">
+          📋 ssh root@203.0.113.10 <span style="color:var(--text-muted)">— backend VPS</span>
+        </div>
+        <div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--cyan)" onclick="copyText('cd /opt/otto && git pull && pm2 restart otto-backend')">
+          📋 cd /opt/otto && git pull && pm2 restart otto-backend <span style="color:var(--text-muted)">— deploy</span>
+        </div>
+        <div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--cyan)" onclick="copyText('pm2 logs otto-backend --lines 100')">
+          📋 pm2 logs otto-backend --lines 100 <span style="color:var(--text-muted)">— view logs</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function restartBackend() {
+  if (!confirm('Restart otto-backend? The API will be briefly unavailable.')) return;
+  try {
+    toast('Restarting backend...', 'info');
+    await api('/backend/restart', { method: 'POST' });
+    toast('Backend restart initiated — reconnecting in 5s...', 'success');
+    setTimeout(() => location.reload(), 5000);
+  } catch (err) {
+    // Expected — the restart kills the connection
+    toast('Backend restarting... refresh in a few seconds', 'info');
+    setTimeout(() => location.reload(), 5000);
+  }
+}
+
+async function restartPool() {
+  if (!confirm('Restart otto-pool worker?')) return;
+  try {
+    const data = await api('/pool/restart', { method: 'POST' });
+    if (data) toast('Pool worker restarted', 'success');
+  } catch (err) {
+    toast(`Pool restart failed: ${err.message}`, 'error');
+  }
+}
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatCredits(cents) {
+  if (!cents) return '0';
+  if (cents >= 100) return `€${(cents / 100).toFixed(2)}`;
+  return `${cents}¢`;
+}
+
+function formatDuration(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const h = Math.floor(m / 60);
+  const d = Math.floor(h / 24);
+  if (d > 0) return `${d}d ${h % 24}h`;
+  if (h > 0) return `${h}h ${m % 60}m`;
+  return `${m}m`;
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => toast('Copied!', 'success'));
+}
+
+// ─── Init ───────────────────────────────────────────────────────────────────
+
+TOKEN = getToken();
+if (!TOKEN) {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="empty">
+      <p style="font-size:16px;margin-bottom:12px">🔒 Admin access required</p>
+      <p style="color:var(--text-dim);margin-bottom:20px">Sign in with your admin Google account</p>
+      <div id="adminGoogleBtn"></div>
+    </div>`;
+  // Render Google Sign-In button
+  function initAdminGoogle() {
+    if (typeof google === 'undefined') { setTimeout(initAdminGoogle, 200); return; }
+    google.accounts.id.initialize({
+      client_id: '300210895828-3gm0mt8cc2diekmejk67a9c3l3gp3jkp.apps.googleusercontent.com',
+      callback: async (response) => {
+        try {
+          const res = await fetch('/api/auth/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_token: response.credential }),
+          });
+          const data = await res.json();
+          if (data.token) {
+            localStorage.setItem('otto_admin_token', data.token);
+            TOKEN = data.token;
+            renderView();
+            startAutoRefresh();
+          } else {
+            alert('Auth failed: ' + (data.error || 'Unknown error'));
+          }
+        } catch (err) {
+          alert('Auth error: ' + err.message);
+        }
+      },
+    });
+    google.accounts.id.renderButton(
+      document.getElementById('adminGoogleBtn'),
+      { theme: 'filled_black', size: 'large', text: 'signin_with', shape: 'rectangular' }
+    );
+  }
+  initAdminGoogle();
+} else {
+  renderView();
+  startAutoRefresh();
+}
+
+// ============================================================
+// Prospects Mini CRM
+// ============================================================
+
+const STATUS_LABELS = {
+  new: { label: 'New', color: '#6366f1', bg: 'rgba(99,102,241,0.12)' },
+  contacted: { label: 'Contacted', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' },
+  demo_scheduled: { label: 'Demo', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
+  demo_done: { label: 'Demo Done', color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
+  negotiating: { label: 'Negotiating', color: '#a855f7', bg: 'rgba(168,85,247,0.12)' },
+  won: { label: 'Won', color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+  lost: { label: 'Lost', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' },
+  churned: { label: 'Churned', color: '#6b7280', bg: 'rgba(107,114,128,0.12)' },
+};
+
+const SOURCE_LABELS = { inbound: 'Inbound', outbound: 'Outbound', referral: 'Referral', linkedin: 'LinkedIn', website: 'Website', event: 'Event', other: 'Other' };
+
+let prospectsData = [];
+let prospectsFilter = 'all';
+let prospectsSearch = '';
+let editingProspectId = null;
+
+async function renderProspects(main) {
+  const [listData, statsData] = await Promise.all([
+    api('/prospects'),
+    api('/prospects/stats'),
+  ]);
+  prospectsData = listData.prospects || [];
+
+  const pipeline = statsData.pipeline || {};
+  const pipelineStages = ['new', 'contacted', 'demo_scheduled', 'demo_done', 'negotiating'];
+
+  // Stats cards
+  let statsHtml = `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Total Prospects</div><div class="stat-value accent">${statsData.total || 0}</div></div>
+      <div class="stat-card"><div class="stat-label">Pipeline Value</div><div class="stat-value">€${((statsData.totalValue || 0) / 100).toFixed(0)}</div><div class="stat-sub">/month potential</div></div>
+      <div class="stat-card"><div class="stat-label">Won</div><div class="stat-value green">${statsData.wonCount || 0}</div><div class="stat-sub">€${((statsData.wonValue || 0) / 100).toFixed(0)}/mo</div></div>
+      <div class="stat-card"><div class="stat-label">Overdue</div><div class="stat-value ${statsData.overdueCount > 0 ? 'orange' : ''}">${statsData.overdueCount || 0}</div><div class="stat-sub">need follow-up</div></div>
+    </div>
+  `;
+
+  // Pipeline funnel
+  let funnelHtml = '<div style="display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px">';
+  for (const stage of pipelineStages) {
+    const s = STATUS_LABELS[stage];
+    const count = pipeline[stage]?.count || 0;
+    const val = pipeline[stage]?.value || 0;
+    funnelHtml += `<div onclick="filterProspects('${stage}')" style="flex:1;min-width:90px;padding:10px;background:${s.bg};border:1px solid ${prospectsFilter === stage ? s.color : 'transparent'};border-radius:8px;cursor:pointer;text-align:center;transition:border-color 0.2s">
+      <div style="font-size:18px;font-weight:700;color:${s.color}">${count}</div>
+      <div style="font-size:10px;color:var(--text-dim);margin-top:2px">${s.label}</div>
+      ${val > 0 ? `<div style="font-size:9px;color:var(--text-muted);margin-top:1px">€${(val/100).toFixed(0)}/mo</div>` : ''}
+    </div>`;
+  }
+  funnelHtml += `<div onclick="filterProspects('all')" style="flex:1;min-width:90px;padding:10px;background:${prospectsFilter === 'all' ? 'var(--surface-2)' : 'transparent'};border:1px solid ${prospectsFilter === 'all' ? 'var(--accent)' : 'var(--border)'};border-radius:8px;cursor:pointer;text-align:center">
+    <div style="font-size:18px;font-weight:700;color:var(--text)">${statsData.total || 0}</div>
+    <div style="font-size:10px;color:var(--text-dim);margin-top:2px">All</div>
+  </div>`;
+  funnelHtml += '</div>';
+
+  // Toolbar
+  let toolbarHtml = `<div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
+    <input type="text" id="prospectSearch" placeholder="Search name, company, email..." value="${prospectsSearch}" oninput="prospectsSearch=this.value;renderProspectsTable()" style="flex:1;min-width:200px;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;outline:none">
+    <button onclick="showAddProspectModal()" style="padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">+ Add Prospect</button>
+  </div>`;
+
+  main.innerHTML = `
+    <div class="view-title">Prospects <button class="refresh-btn" onclick="navigate('prospects')">↻</button></div>
+    ${statsHtml}
+    <div class="card">
+      <div class="card-title">Pipeline</div>
+      ${funnelHtml}
+    </div>
+    <div class="card">
+      <div class="card-title">Prospects</div>
+      ${toolbarHtml}
+      <div id="prospectsTableContainer"></div>
+    </div>
+    <div id="prospectModal" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center"></div>
+  `;
+
+  renderProspectsTable();
+}
+
+function renderProspectsTable() {
+  const container = document.getElementById('prospectsTableContainer');
+  if (!container) return;
+
+  let filtered = prospectsData;
+  if (prospectsFilter !== 'all') filtered = filtered.filter(p => p.status === prospectsFilter);
+  if (prospectsSearch) {
+    const q = prospectsSearch.toLowerCase();
+    filtered = filtered.filter(p =>
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.company || '').toLowerCase().includes(q) ||
+      (p.email || '').toLowerCase().includes(q)
+    );
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-dim);font-size:13px">No prospects found. Click + Add Prospect to get started.</div>';
+    return;
+  }
+
+  let html = '<table class="data-table" style="width:100%"><thead><tr>';
+  html += '<th>Name</th><th>Company</th><th>Status</th><th>Source</th><th>Value</th><th>Next Action</th><th>Last Contact</th><th></th>';
+  html += '</tr></thead><tbody>';
+
+  for (const p of filtered) {
+    const s = STATUS_LABELS[p.status] || STATUS_LABELS.new;
+    const isOverdue = p.next_action_date && new Date(p.next_action_date) < new Date() && !['won','lost','churned'].includes(p.status);
+    const nextDate = p.next_action_date ? new Date(p.next_action_date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : '—';
+    const lastDate = p.last_contact_date ? new Date(p.last_contact_date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : '—';
+    const noteCount = (p.notes || []).length;
+
+    html += `<tr style="cursor:pointer" onclick="showProspectDetail('${p.id}')">
+      <td>
+        <div style="font-weight:600;color:var(--text)">${esc(p.name)}</div>
+        ${p.email ? `<div style="font-size:10px;color:var(--text-dim)">${esc(p.email)}</div>` : ''}
+      </td>
+      <td style="color:var(--text-muted)">${esc(p.company || '—')}</td>
+      <td><span style="padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;background:${s.bg};color:${s.color}">${s.label}</span></td>
+      <td style="font-size:11px;color:var(--text-dim)">${SOURCE_LABELS[p.source] || p.source}</td>
+      <td style="font-weight:600">${p.deal_value ? '€' + (p.deal_value / 100).toFixed(0) + '/mo' : '—'}</td>
+      <td>
+        <div style="font-size:11px;${isOverdue ? 'color:var(--red);font-weight:600' : 'color:var(--text-muted)'}">${nextDate}</div>
+        ${p.next_action ? `<div style="font-size:10px;color:var(--text-dim)">${esc(p.next_action.substring(0,30))}</div>` : ''}
+      </td>
+      <td style="font-size:11px;color:var(--text-muted)">${lastDate}</td>
+      <td>
+        ${noteCount > 0 ? `<span style="font-size:10px;color:var(--text-dim)">📝${noteCount}</span>` : ''}
+      </td>
+    </tr>`;
+  }
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+function filterProspects(status) {
+  prospectsFilter = status;
+  navigate('prospects');
+}
+
+function showAddProspectModal() {
+  const modal = document.getElementById('prospectModal');
+  modal.style.display = 'flex';
+  modal.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;width:420px;max-width:90vw;max-height:85vh;overflow-y:auto">
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px">New Prospect</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input id="pm_name" placeholder="Name *" style="padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
+        <input id="pm_company" placeholder="Company" style="padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
+        <div style="display:flex;gap:8px">
+          <input id="pm_email" placeholder="Email" style="flex:1;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
+          <input id="pm_phone" placeholder="Phone" style="flex:1;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
+        </div>
+        <input id="pm_linkedin" placeholder="LinkedIn URL" style="padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
+        <div style="display:flex;gap:8px">
+          <select id="pm_source" style="flex:1;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
+            ${Object.entries(SOURCE_LABELS).map(([k,v]) => `<option value="${k}">${v}</option>`).join('')}
+          </select>
+          <input id="pm_value" placeholder="€/month" type="number" style="flex:1;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
+        </div>
+        <div style="display:flex;gap:8px">
+          <input id="pm_action" placeholder="Next action" style="flex:1;padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
+          <input id="pm_date" type="date" style="padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px">
+        </div>
+        <textarea id="pm_note" placeholder="Initial note (optional)" rows="2" style="padding:8px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;resize:vertical"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;justify-content:flex-end">
+        <button onclick="closeProspectModal()" style="padding:8px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;cursor:pointer">Cancel</button>
+        <button onclick="saveNewProspect()" style="padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">Create</button>
+      </div>
+    </div>
+  `;
+}
+
+function closeProspectModal() {
+  document.getElementById('prospectModal').style.display = 'none';
+}
+
+async function saveNewProspect() {
+  const name = document.getElementById('pm_name').value.trim();
+  if (!name) return alert('Name is required');
+  const note = document.getElementById('pm_note').value.trim();
+  const val = document.getElementById('pm_value').value;
+
+  await api('/prospects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name,
+      company: document.getElementById('pm_company').value.trim() || null,
+      email: document.getElementById('pm_email').value.trim() || null,
+      phone: document.getElementById('pm_phone').value.trim() || null,
+      linkedin: document.getElementById('pm_linkedin').value.trim() || null,
+      source: document.getElementById('pm_source').value,
+      deal_value: val ? parseInt(val) * 100 : null,
+      next_action: document.getElementById('pm_action').value.trim() || null,
+      next_action_date: document.getElementById('pm_date').value || null,
+      notes: note ? [{ text: note, date: new Date().toISOString() }] : [],
+    }),
+  });
+  closeProspectModal();
+  navigate('prospects');
+}
+
+function showProspectDetail(id) {
+  const p = prospectsData.find(x => x.id === id);
+  if (!p) return;
+  const s = STATUS_LABELS[p.status] || STATUS_LABELS.new;
+  const notes = (p.notes || []).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const modal = document.getElementById('prospectModal');
+  modal.style.display = 'flex';
+  modal.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;width:520px;max-width:92vw;max-height:85vh;overflow-y:auto">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-size:18px;font-weight:700;color:var(--text)">${esc(p.name)}</div>
+          ${p.company ? `<div style="font-size:13px;color:var(--text-dim)">${esc(p.company)}</div>` : ''}
+        </div>
+        <span style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;background:${s.bg};color:${s.color}">${s.label}</span>
+      </div>
+
+      <!-- Contact info -->
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px;font-size:12px;color:var(--text-muted)">
+        ${p.email ? `<a href="mailto:${esc(p.email)}" style="color:var(--accent)">${esc(p.email)}</a>` : ''}
+        ${p.phone ? `<span>${esc(p.phone)}</span>` : ''}
+        ${p.linkedin ? `<a href="${esc(p.linkedin)}" target="_blank" style="color:var(--accent)">LinkedIn ↗</a>` : ''}
+        ${p.deal_value ? `<span style="font-weight:600;color:var(--text)">€${(p.deal_value/100).toFixed(0)}/mo</span>` : ''}
+      </div>
+
+      <!-- Status change -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase">Move to</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          ${Object.entries(STATUS_LABELS).map(([k, v]) =>
+            `<button onclick="updateProspectStatus('${id}','${k}')" style="padding:4px 10px;border-radius:4px;font-size:10px;font-weight:600;border:1px solid ${p.status === k ? v.color : 'var(--border)'};background:${p.status === k ? v.bg : 'transparent'};color:${p.status === k ? v.color : 'var(--text-dim)'};cursor:pointer">${v.label}</button>`
+          ).join('')}
+        </div>
+      </div>
+
+      <!-- Next action -->
+      <div style="margin-bottom:16px;padding:10px;background:var(--surface-2);border-radius:8px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase">Next Action</div>
+        <div style="display:flex;gap:8px">
+          <input id="pd_action" value="${esc(p.next_action || '')}" placeholder="What to do next..." style="flex:1;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px">
+          <input id="pd_date" type="date" value="${p.next_action_date ? new Date(p.next_action_date).toISOString().split('T')[0] : ''}" style="padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px">
+          <button onclick="updateProspectAction('${id}')" style="padding:6px 12px;background:var(--accent);color:white;border:none;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer">Save</button>
+        </div>
+      </div>
+
+      <!-- Add note -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:11px;font-weight:600;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase">Notes</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <input id="pd_note" placeholder="Add a note..." style="flex:1;padding:6px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:12px" onkeydown="if(event.key==='Enter')addProspectNote('${id}')">
+          <button onclick="addProspectNote('${id}')" style="padding:6px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:11px;cursor:pointer">Add</button>
+        </div>
+        <div style="max-height:200px;overflow-y:auto">
+          ${notes.length > 0 ? notes.map(n => `
+            <div style="padding:8px;border-left:2px solid var(--accent);margin-bottom:6px;margin-left:4px">
+              <div style="font-size:12px;color:var(--text)">${esc(n.text)}</div>
+              <div style="font-size:10px;color:var(--text-dim);margin-top:2px">${new Date(n.date).toLocaleString('fr-FR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })}</div>
+            </div>
+          `).join('') : '<div style="font-size:12px;color:var(--text-dim);padding:8px">No notes yet</div>'}
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:space-between;border-top:1px solid var(--border);padding-top:12px">
+        <button onclick="deleteProspect('${id}')" style="padding:6px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:6px;color:var(--red);font-size:11px;cursor:pointer">Delete</button>
+        <button onclick="closeProspectModal()" style="padding:6px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:11px;cursor:pointer">Close</button>
+      </div>
+    </div>
+  `;
+}
+
+async function updateProspectStatus(id, status) {
+  await api('/prospects/' + id, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status }),
+  });
+  closeProspectModal();
+  navigate('prospects');
+}
+
+async function updateProspectAction(id) {
+  await api('/prospects/' + id, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      next_action: document.getElementById('pd_action').value.trim() || null,
+      next_action_date: document.getElementById('pd_date').value || null,
+    }),
+  });
+  closeProspectModal();
+  navigate('prospects');
+}
+
+async function addProspectNote(id) {
+  const input = document.getElementById('pd_note');
+  const text = input.value.trim();
+  if (!text) return;
+  await api('/prospects/' + id + '/note', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+  navigate('prospects');
+  // Reopen the detail after refresh
+  setTimeout(() => showProspectDetail(id), 300);
+}
+
+async function deleteProspect(id) {
+  if (!confirm('Delete this prospect?')) return;
+  await api('/prospects/' + id, { method: 'DELETE' });
+  closeProspectModal();
+  navigate('prospects');
+}
+</script>
+</body>
+</html>

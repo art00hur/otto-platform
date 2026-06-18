@@ -1,0 +1,23 @@
+{
+  "channels": {
+    "whatsapp": {
+      "selfChatMode": true,
+      "dmPolicy": "allowlist",
+      "allowFrom": ["{{WHATSAPP_NUMBER}}"],
+      "groupPolicy": "deny",
+      "configWrites": false
+    }
+  },
+  "tools": {
+    "elevated": [],
+    "sandbox": true
+  },
+  "skills": {
+    "autoInstall": false,
+    "requireApproval": true
+  },
+  "privacy": {
+    "telemetry": false,
+    "localStorageOnly": true
+  }
+}
