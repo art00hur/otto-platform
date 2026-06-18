@@ -33,6 +33,6 @@
     "@types/qrcode": "^1.5.5",
     "drizzle-kit": "^0.30.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.7.0"
+    "typescript": "^6.0.3"
   }
 }
